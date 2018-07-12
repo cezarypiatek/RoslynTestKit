@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{6A11B13C-B0B6-4538-8F1F-D8A818A93BB2}"
+ProjectSection(SolutionItems) = preProject
+	RoslynNUnitLight.NetStandard.nuspec = RoslynNUnitLight.NetStandard.nuspec
+EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynNUnitLight.NetStandard", "RoslynNUnitLight.NetStandard\RoslynNUnitLight.NetStandard.csproj", "{2F74943F-A8D7-4F13-8479-22161014B0F4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F74943F-A8D7-4F13-8479-22161014B0F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F74943F-A8D7-4F13-8479-22161014B0F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F74943F-A8D7-4F13-8479-22161014B0F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F74943F-A8D7-4F13-8479-22161014B0F4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
