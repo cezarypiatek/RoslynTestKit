@@ -60,9 +60,10 @@ namespace RoslynNUnitLight
 
         public static Document GetDocument(string code, string languageName, ImmutableList<MetadataReference> references = null)
         {
-            references = references ?? ImmutableList.Create<MetadataReference>(
-                MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.GetLocation()),
-                MetadataReference.CreateFromFile(typeof(Enumerable).GetTypeInfo().Assembly.GetLocation()));
+            references = references ?? ImmutableList<MetadataReference>.Empty;
+            references = references
+                .Add(References.Core)
+                .Add(References.Linq);
 
             return new AdhocWorkspace()
                 .AddProject("TestProject", languageName)

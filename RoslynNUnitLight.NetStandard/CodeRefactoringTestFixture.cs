@@ -11,13 +11,15 @@ namespace RoslynNUnitLight
 {
     public abstract class CodeRefactoringTestFixture : BaseTestFixture
     {
+        protected virtual ImmutableList<MetadataReference> References => null;
+        
         protected abstract CodeRefactoringProvider CreateProvider();
 
         protected void TestCodeRefactoring(string markupCode, string expected)
         {
-            Document document;
-            TextSpan span;
-            Assert.That(TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, out document, out span), Is.True);
+            bool documentCreated = TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, References,
+                out Document document, out TextSpan span);
+            Assert.That(documentCreated, Is.True);
 
             TestCodeRefactoring(document, span, expected);
         }
@@ -29,6 +31,22 @@ namespace RoslynNUnitLight
             Assert.That(codeRefactorings.Length, Is.EqualTo(1));
 
             Verify.CodeAction(codeRefactorings[0], document, expected);
+        }
+
+        protected void TestNoCodeRefactoring(string markupCode)
+        {
+            bool documentCreated = TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, References,
+                out Document document, out TextSpan span);
+            Assert.That(documentCreated, Is.True);
+            
+            TestNoCodeRefactoring(document, span);
+        }
+
+        protected void TestNoCodeRefactoring(Document document, TextSpan span)
+        {
+            var codeRefactorings = GetCodeRefactorings(document, span);
+            
+            Assert.That(codeRefactorings, Is.Empty);
         }
 
         private ImmutableArray<CodeAction> GetCodeRefactorings(Document document, TextSpan span)
