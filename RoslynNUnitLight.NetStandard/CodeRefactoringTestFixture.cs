@@ -15,22 +15,22 @@ namespace RoslynNUnitLight
         
         protected abstract CodeRefactoringProvider CreateProvider();
 
-        protected void TestCodeRefactoring(string markupCode, string expected)
+        protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex=0)
         {
             bool documentCreated = TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, References,
                 out Document document, out TextSpan span);
             Assert.That(documentCreated, Is.True);
 
-            TestCodeRefactoring(document, span, expected);
+            TestCodeRefactoring(document, span, expected, refactoringIndex);
         }
 
-        protected void TestCodeRefactoring(Document document, TextSpan span, string expected)
+        protected void TestCodeRefactoring(Document document, TextSpan span, string expected, int refactoringIndex=0)
         {
             var codeRefactorings = GetCodeRefactorings(document, span);
 
-            Assert.That(codeRefactorings.Length, Is.EqualTo(1));
+            Assert.That(codeRefactorings.Length, Is.AtLeast(refactoringIndex+1));
 
-            Verify.CodeAction(codeRefactorings[0], document, expected);
+            Verify.CodeAction(codeRefactorings[refactoringIndex], document, expected);
         }
 
         protected void TestNoCodeRefactoring(string markupCode)
