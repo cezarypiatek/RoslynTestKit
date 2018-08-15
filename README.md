@@ -5,7 +5,7 @@ analyzers, code fixes and refactorings using NUnit.
 
 ### Quick Start
 
-1. Install the [RoslynNUnitLight](https://www.nuget.org/packages/RoslynNUnitLight)
+1. Install the [RoslynNUnitLight](https://www.nuget.org/packages/RoslynNUnitLight.NetStandard)
    package from NuGet into your project.
 2. Create a new class that inherits from one of the provided ```*TestFixture```
    classes that matches what are going to test.
