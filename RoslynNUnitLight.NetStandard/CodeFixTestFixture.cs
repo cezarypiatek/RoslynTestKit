@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -13,12 +15,22 @@ namespace RoslynNUnitLight
     {
         protected abstract CodeFixProvider CreateProvider();
 
+        protected void TestCodeFix(string markupCode, string expected, string diagnosticId)
+        {
+            var (document, span) = GetDocumentAndSpanFromMarkup(markupCode);
+            var reportedDiagnostics = GetReportedDiagnostics(document).ToList();
+            var diagnostic = reportedDiagnostics.FirstOrDefault(x => x.Id == diagnosticId);
+            Assert.That(diagnostic, Is.Not.Null, ()=>
+            {
+                var reportedIssues = reportedDiagnostics.Select(x => x.Id).ToList();
+                return $"There is no issue reported for {diagnosticId}. Reported issues: {string.Join(",", reportedIssues)}";
+            });
+            TestCodeFix(document, span, expected, diagnostic.Descriptor);
+        }
+
         protected void TestCodeFix(string markupCode, string expected, DiagnosticDescriptor descriptor)
         {
-            Document document;
-            TextSpan span;
-            Assert.That(TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, out document, out span), Is.True);
-
+            var (document, span) = GetDocumentAndSpanFromMarkup(markupCode);
             TestCodeFix(document, span, expected, descriptor);
         }
 
@@ -30,20 +42,42 @@ namespace RoslynNUnitLight
             Verify.CodeAction(codeFixes[0], document, expected);
         }
 
+        private (Document document, TextSpan span) GetDocumentAndSpanFromMarkup(string markupCode)
+        {
+            Assert.That(TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, out var document, out var span), Is.True);
+            return (document, span);
+        }
+
+
+        private static IEnumerable<Diagnostic> GetReportedDiagnostics(Document document)
+        {
+            return document.GetSemanticModelAsync().Result.GetDiagnostics();
+        }
+
+
         private ImmutableArray<CodeAction> GetCodeFixes(Document document, TextSpan span, DiagnosticDescriptor descriptor)
         {
             var builder = ImmutableArray.CreateBuilder<CodeAction>();
-            Action<CodeAction, ImmutableArray<Diagnostic>> registerCodeFix =
-                (a, _) => builder.Add(a);
-
-            var tree = document.GetSyntaxTreeAsync(CancellationToken.None).Result;
-            var diagnostic = Diagnostic.Create(descriptor, Location.Create(tree, span));
-            var context = new CodeFixContext(document, diagnostic, registerCodeFix, CancellationToken.None);
+            var diagnostic = GetDiagnosticForDescriptor(document, span, descriptor);
+            var context = new CodeFixContext(document, diagnostic, (a, _) => builder.Add(a), CancellationToken.None);
 
             var provider = CreateProvider();
             provider.RegisterCodeFixesAsync(context).Wait();
 
             return builder.ToImmutable();
+        }
+
+        private static Diagnostic GetDiagnosticForDescriptor(Document document, TextSpan span, DiagnosticDescriptor descriptor)
+        {
+            var reportedDiagnostics = GetReportedDiagnostics(document).ToList();
+            var diagnostic = reportedDiagnostics.FirstOrDefault(x => x.Id == descriptor.Id);
+            if (diagnostic != null)
+            {
+                return diagnostic;
+            }
+
+            var tree = document.GetSyntaxTreeAsync(CancellationToken.None).Result;
+            return Diagnostic.Create(descriptor, Location.Create(tree, span));
         }
     }
 }
