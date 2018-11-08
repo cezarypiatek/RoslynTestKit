@@ -15,7 +15,7 @@ namespace RoslynNUnitLight
     {
         protected abstract CodeFixProvider CreateProvider();
 
-        protected void TestCodeFix(string markupCode, string expected, string diagnosticId)
+        protected void TestCodeFix(string markupCode, string expected, string diagnosticId, int codeFixIndex = 0)
         {
             var (document, span) = GetDocumentAndSpanFromMarkup(markupCode);
             var reportedDiagnostics = GetReportedDiagnostics(document).ToList();
@@ -25,21 +25,20 @@ namespace RoslynNUnitLight
                 var reportedIssues = reportedDiagnostics.Select(x => x.Id).ToList();
                 return $"There is no issue reported for {diagnosticId}. Reported issues: {string.Join(",", reportedIssues)}";
             });
-            TestCodeFix(document, span, expected, diagnostic.Descriptor);
+            TestCodeFix(document, span, expected, diagnostic.Descriptor, codeFixIndex);
         }
 
-        protected void TestCodeFix(string markupCode, string expected, DiagnosticDescriptor descriptor)
+        protected void TestCodeFix(string markupCode, string expected, DiagnosticDescriptor descriptor, int codeFixIndex = 0)
         {
             var (document, span) = GetDocumentAndSpanFromMarkup(markupCode);
-            TestCodeFix(document, span, expected, descriptor);
+            TestCodeFix(document, span, expected, descriptor, codeFixIndex);
         }
 
-        protected void TestCodeFix(Document document, TextSpan span, string expected, DiagnosticDescriptor descriptor)
+        protected void TestCodeFix(Document document, TextSpan span, string expected, DiagnosticDescriptor descriptor, int codeFixIndex = 0)
         {
             var codeFixes = GetCodeFixes(document, span, descriptor);
-            Assert.That(codeFixes.Length, Is.EqualTo(1));
-
-            Verify.CodeAction(codeFixes[0], document, expected);
+            Assert.That(codeFixes.Length, Is.AtLeast(codeFixIndex + 1));
+            Verify.CodeAction(codeFixes[codeFixIndex], document, expected);
         }
 
         private (Document document, TextSpan span) GetDocumentAndSpanFromMarkup(string markupCode)
