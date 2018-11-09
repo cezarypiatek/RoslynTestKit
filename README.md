@@ -5,7 +5,7 @@ analyzers, code fixes and refactorings using NUnit.
 
 ### Quick Start
 
-1. Install the [RoslynNUnitLight](https://www.nuget.org/packages/RoslynNUnitLight.NetStandard)
+1. Install the [RoslynNUnitLight.NetStandard](https://www.nuget.org/packages/RoslynNUnitLight.NetStandard)
    package from NuGet into your project.
 2. Create a new class that inherits from one of the provided ```*TestFixture```
    classes that matches what are going to test.
@@ -88,6 +88,7 @@ class C
     TestCodeFix(markupCode, expected, DiagnosticDescriptors.UseGetterOnlyAutoProperty);
 }
 ```
+Instead of the diagnostic descriptor, you can also use Diagnostic Id (error code) to identify the issue which should be fixed by tested code fix. This allows testing code fixes which respond to standard C# compiler errors such as `CS0736`.
 
 #### Example: Test code refactoring behavior
 
