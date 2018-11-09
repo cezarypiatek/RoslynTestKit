@@ -43,7 +43,7 @@ namespace RoslynNUnitLight
 
         private (Document document, TextSpan span) GetDocumentAndSpanFromMarkup(string markupCode)
         {
-            Assert.That(TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, out var document, out var span), Is.True);
+            Assert.That(TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, out var document, out var span), Is.True, "Cannot find any text span marked with '[||]'");
             return (document, span);
         }
 
