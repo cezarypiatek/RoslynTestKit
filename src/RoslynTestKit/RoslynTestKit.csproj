@@ -6,10 +6,10 @@
     <Authors>Dustin Campbell, Ivan Yochev, Cezary Piątek</Authors>
     <Title>RoslynTestKit</Title>
     <Description>A lightweight framework for creating unit tests for Roslyn diagnostic analyzers, code fixes and refactorings. This is a of fork Dustin Campbell's library RoslynNUnitLight - this version is a test framework independent.</Description>
-    <Copyright>Copyright 2015 by Dustin Campbell</Copyright>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/DustinCampbell/RoslynNUnitLight/master/License.txt</PackageLicenseUrl>
-    <PackageProjectUrl>http://github.com/phoenix172/RoslynNUnitLight.NetStandard</PackageProjectUrl>
-    <RepositoryUrl>http://github.com/phoenix172/RoslynNUnitLight.NetStandard</RepositoryUrl>
+    <Copyright>Copyright 2015-2019 by Dustin Campbell, Ivan Yochev, Cezary Piątek</Copyright>
+    <PackageLicenseUrl>https://github.com/cezarypiatek/RoslynTestKit/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/cezarypiatek/RoslynTestKit</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/cezarypiatek/RoslynTestKit</RepositoryUrl>
     <PackageTags>Roslyn CodeAnalysis test testing tdd analyzer fixes refactor refactoring</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Language>en-US</Language>

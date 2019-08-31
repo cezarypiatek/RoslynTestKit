@@ -1,0 +1,20 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+configuration: Release
+dotnet_csproj:
+  patch: true
+  file: '**\*.csproj'
+  version: '{version}'
+  package_version: '{version}'
+  assembly_version: '{version}'
+  file_version: '{version}'
+  informational_version: '{version}'
+before_build:
+- cmd: nuget restore src
+- cmd: dotnet restore src
+build:
+  project: src\RoslynTestKit.sln
+  verbosity: minimal
+artifacts:
+- path: src\RoslynTestKit\bin\Release\RoslynTestKit.*.nupkg
+  name: RoslynTestKit.*.nupkg
