@@ -1,10 +1,7 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using RoslynNUnitLight.Reflection;
 
 namespace RoslynNUnitLight
 {
