@@ -6,7 +6,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
-using NUnit.Framework;
 
 namespace RoslynNUnitLight
 {
@@ -50,20 +49,22 @@ namespace RoslynNUnitLight
 
         private void TestCodeFix(Document document, string expected, string diagnosticId, IDiagnosticLocator locator, int codeFixIndex)
         {
-            var reportedDiagnostics = GetReportedDiagnostics(document, locator).ToList();
+            var reportedDiagnostics = GetReportedDiagnostics(document, locator).ToArray();
             var diagnostic = reportedDiagnostics.FirstOrDefault(x => x.Id == diagnosticId);
-            Assert.That(diagnostic, Is.Not.Null, () =>
+            if (diagnostic == null)
             {
-                var reportedIssues = reportedDiagnostics.Select(x => x.Id).ToList();
-                return $"There is no issue reported for {diagnosticId}. Reported issues: {string.Join(",", reportedIssues)}";
-            });
+                throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reportedDiagnostics);
+            }
             TestCodeFix(document, expected, diagnostic.Descriptor, locator, codeFixIndex);
         }
 
         private void TestCodeFix(Document document, string expected, DiagnosticDescriptor descriptor, IDiagnosticLocator locator, int codeFixIndex = 0)
         {
             var codeFixes = GetCodeFixes(document, locator, descriptor);
-            Assert.That(codeFixes.Length, Is.AtLeast(codeFixIndex + 1));
+            if (codeFixes.Length < codeFixIndex + 1)
+            {
+                throw RoslynTestKitException.CodeFixNotFound(codeFixIndex, codeFixes);
+            }
             Verify.CodeAction(codeFixes[codeFixIndex], document, expected);
         }
 

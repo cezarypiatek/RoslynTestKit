@@ -2,7 +2,6 @@
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
-using NUnit.Framework;
 
 namespace RoslynNUnitLight
 {
@@ -10,9 +9,16 @@ namespace RoslynNUnitLight
     {
         public static void CodeAction(CodeAction codeAction, Document document, string expectedCode)
         {
-            var operations = codeAction.GetOperationsAsync(CancellationToken.None).Result;
+            var operations = codeAction.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult().ToList();
+            if (operations.Count == 0)
+            {
+                throw RoslynTestKitException.NoOperationForCodeAction(codeAction);
+            }
 
-            Assert.That(operations.Count(), Is.EqualTo(1));
+            if (operations.Count>1)
+            {
+                throw RoslynTestKitException.MoreThanOneOperationForCodeAction(codeAction, operations);
+            }
 
             var operation = operations.Single();
             var workspace = document.Project.Solution.Workspace;
@@ -20,10 +26,12 @@ namespace RoslynNUnitLight
 
             var newDocument = workspace.CurrentSolution.GetDocument(document.Id);
 
-            var sourceText = newDocument.GetTextAsync(CancellationToken.None).Result;
+            var sourceText = newDocument.GetTextAsync(CancellationToken.None).GetAwaiter().GetResult();
             var text = sourceText.ToString();
-
-            Assert.That(text, Is.EqualTo(expectedCode));
+            if (text != expectedCode)
+            {
+                throw new  TransformedCodeDifferentThanExpectedException(text, expectedCode);
+            }
         }
     }
 }
