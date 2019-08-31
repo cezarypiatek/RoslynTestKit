@@ -4,7 +4,6 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using NUnit.Framework;
 
 namespace RoslynNUnitLight
 {
@@ -22,7 +21,11 @@ namespace RoslynNUnitLight
         protected void NoDiagnostic(Document document, string diagnosticId)
         {
             var diagnostics = GetDiagnostics(document);
-            Assert.That(diagnostics.Any(d => d.Id == diagnosticId), Is.False);
+            var hasDiagnostic = diagnostics.Any(d => d.Id == diagnosticId);
+            if (hasDiagnostic)
+            {
+                throw RoslynTestKitException.UnexpectedDiagnostic(diagnosticId);
+            }
         }
 
         protected void HasDiagnostic(string markupCode, string diagnosticId)
@@ -53,11 +56,13 @@ namespace RoslynNUnitLight
 
         private void HasDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator)
         {
-            var matchedDiagnostics = GetDiagnostics(document)
-                .Where(d => locator.Match(d.Location))
-                .Count(d => d.Id == diagnosticId);
+            var reporteddiagnostics = GetDiagnostics(document).Where(d => locator.Match(d.Location)).ToArray();
+            var matchedDiagnostics = reporteddiagnostics.Count(d => d.Id == diagnosticId);
 
-            Assert.That(matchedDiagnostics, Is.EqualTo(1));
+            if (matchedDiagnostics == 0)
+            {
+                throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reporteddiagnostics);
+            }
         }
 
         private ImmutableArray<Diagnostic> GetDiagnostics(Document document)

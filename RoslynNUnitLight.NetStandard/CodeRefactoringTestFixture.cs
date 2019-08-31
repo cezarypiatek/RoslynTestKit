@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Text;
-using NUnit.Framework;
 
 namespace RoslynNUnitLight
 {
@@ -34,15 +33,17 @@ namespace RoslynNUnitLight
 
         protected void TestCodeRefactoring(Document document, string expected, TextSpan span, int refactoringIndex = 0)
         {
-            var codeRefactorings = GetCodeRefactorings(document, new TextSpanLocator(span));
-            Assert.That(codeRefactorings.Length, Is.AtLeast(refactoringIndex+1));
-            Verify.CodeAction(codeRefactorings[refactoringIndex], document, expected);
+            var locator = new TextSpanLocator(span);
+            TestCodeRefactoring(document, expected, locator, refactoringIndex);
         }
 
         private void TestCodeRefactoring(Document document, string expected, IDiagnosticLocator locator, int refactoringIndex = 0)
         {
             var codeRefactorings = GetCodeRefactorings(document, locator);
-            Assert.That(codeRefactorings.Length, Is.AtLeast(refactoringIndex+1));
+            if (codeRefactorings.Length < refactoringIndex + 1)
+            {
+                throw RoslynTestKitException.CodeRefactoringNotFound(refactoringIndex, codeRefactorings);
+            }
             Verify.CodeAction(codeRefactorings[refactoringIndex], document, expected);
         }
 
@@ -61,8 +62,11 @@ namespace RoslynNUnitLight
 
         private void TestNoCodeRefactoring(Document document, IDiagnosticLocator locator)
         {
-            var codeRefactorings = GetCodeRefactorings(document, locator);
-            Assert.That(codeRefactorings, Is.Empty);
+            var codeRefactorings = GetCodeRefactorings(document, locator).ToImmutableArray();
+            if (codeRefactorings.Length != 0)
+            {
+                throw RoslynTestKitException.UnexpectedCodeRefactorings(codeRefactorings);
+            }
         }
 
         private ImmutableArray<CodeAction> GetCodeRefactorings(Document document, IDiagnosticLocator locator)
