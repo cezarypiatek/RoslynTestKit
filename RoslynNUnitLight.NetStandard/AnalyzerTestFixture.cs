@@ -36,7 +36,7 @@ namespace RoslynNUnitLight
         protected void HasDiagnostic(string code, string diagnosticId, int lineNumber)
         {
             var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
-            var locator = new LineLocator(lineNumber);
+            var locator = LineLocator.FromCode(code, lineNumber);
             HasDiagnostic(document, diagnosticId, locator);
         }
 
@@ -47,7 +47,7 @@ namespace RoslynNUnitLight
         }
         protected void HasDiagnostic(Document document, string diagnosticId, int lineNumber)
         {
-            var locator = new LineLocator(lineNumber);
+            var locator = LineLocator.FromDocument(document, lineNumber);
             HasDiagnostic(document, diagnosticId, locator);
         }
 

@@ -16,5 +16,10 @@ namespace RoslynNUnitLight
         {
             return location.IsInSource && location.SourceSpan == _textSpan;
         }
+
+        public TextSpan GetSpan()
+        {
+            return _textSpan;
+        }
     }
 }
