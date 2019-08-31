@@ -9,7 +9,7 @@ This is a port of [RoslynNUnitLight.NetStandard](https://github.com/phoenix172/R
 
 ### Quick Start
 
-1. Install the [RoslynTestKit](https://www.nuget.org/packages/RoslynTestKit)
+1. Install the [SmartAnalyzers.RoslynTestKit](https://www.nuget.org/packages/SmartAnalyzers.RoslynTestKit/)
    package from NuGet into your project.
 2. Create a new class that inherits from one of the provided ```*TestFixture```
    classes that matches what are going to test.

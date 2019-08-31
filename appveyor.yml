@@ -16,5 +16,5 @@ build:
   project: src\RoslynTestKit.sln
   verbosity: minimal
 artifacts:
-- path: src\RoslynTestKit\bin\Release\RoslynTestKit.*.nupkg
-  name: RoslynTestKit.*.nupkg
+- path: src\RoslynTestKit\bin\Release\SmartAnalyzers.RoslynTestKit.*.nupkg
+  name: SmartAnalyzers.RoslynTestKit.*.nupkg

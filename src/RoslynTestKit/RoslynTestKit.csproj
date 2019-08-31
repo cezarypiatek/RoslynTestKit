@@ -11,10 +11,13 @@
     <PackageLicenseUrl>https://github.com/cezarypiatek/RoslynTestKit/blob/master/License.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/cezarypiatek/RoslynTestKit</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cezarypiatek/RoslynTestKit</RepositoryUrl>
+    <PackageIconUrl>https://github.com/cezarypiatek/RoslynTestKit/raw/master/doc/logo.jpg</PackageIconUrl>
     <PackageTags>Roslyn CodeAnalysis test testing tdd analyzer fixes refactor refactoring</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Language>en-US</Language>
     <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageId>SmartAnalyzers.RoslynTestKit</PackageId>
+    <Product>RoslynTestKit</Product>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ApprovalTests" Version="4.2.0" />
