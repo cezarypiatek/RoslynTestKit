@@ -15,8 +15,7 @@ namespace RoslynNUnitLight
 
         protected void NoDiagnostic(string code, string diagnosticId)
         {
-            var document = TestHelpers.GetDocument(code, LanguageName);
-
+            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
             NoDiagnostic(document, diagnosticId);
         }
 
@@ -33,10 +32,16 @@ namespace RoslynNUnitLight
             HasDiagnostic(document, diagnosticId, locator);
         }
 
-        protected void HasDiagnostic(string code, string diagnosticId, int lineNumber)
+        protected void HasDiagnosticAtLine(string code, string diagnosticId, int lineNumber)
         {
             var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
             var locator = LineLocator.FromCode(code, lineNumber);
+            HasDiagnostic(document, diagnosticId, locator);
+        }
+
+        protected void HasDiagnosticAtLine(Document document, string diagnosticId, int lineNumber)
+        {
+            var locator = LineLocator.FromDocument(document, lineNumber);
             HasDiagnostic(document, diagnosticId, locator);
         }
 
@@ -45,13 +50,8 @@ namespace RoslynNUnitLight
             var locator = new TextSpanLocator(span);
             HasDiagnostic(document, diagnosticId, locator);
         }
-        protected void HasDiagnostic(Document document, string diagnosticId, int lineNumber)
-        {
-            var locator = LineLocator.FromDocument(document, lineNumber);
-            HasDiagnostic(document, diagnosticId, locator);
-        }
 
-        protected void HasDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator)
+        private void HasDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator)
         {
             var matchedDiagnostics = GetDiagnostics(document)
                 .Where(d => locator.Match(d.Location))
