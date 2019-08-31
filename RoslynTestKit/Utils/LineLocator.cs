@@ -2,7 +2,7 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace RoslynNUnitLight
+namespace RoslynTestKit.Utils
 {
     class LineLocator : IDiagnosticLocator
     {

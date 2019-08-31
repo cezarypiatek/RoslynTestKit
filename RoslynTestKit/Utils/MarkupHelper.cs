@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace RoslynNUnitLight
+namespace RoslynTestKit.Utils
 {
     internal static class MarkupHelper
     {

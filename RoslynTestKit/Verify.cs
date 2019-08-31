@@ -3,7 +3,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 
-namespace RoslynNUnitLight
+namespace RoslynTestKit
 {
     public static class Verify
     {
