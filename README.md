@@ -1,11 +1,15 @@
-# RoslynNUnitLight
+# RoslynTestKit
 
-A lightweight framework for writing unit tests for Roslyn diagnostic
-analyzers, code fixes and refactorings using NUnit.
+A lightweight framework for writing unit tests for Roslyn diagnostic analyzers, code fixes and refactorings.
+This is a port of [RoslynNUnitLight.NetStandard](https://github.com/phoenix172/RoslynNUnitLight.NetStandard). The main reasons to create a fork that is independent were:
+
+- make the library independent of the test framework
+- decrease response time for reported issues
+
 
 ### Quick Start
 
-1. Install the [RoslynNUnitLight.NetStandard](https://www.nuget.org/packages/RoslynNUnitLight.NetStandard)
+1. Install the [RoslynTestKit](https://www.nuget.org/packages/RoslynTestKit)
    package from NuGet into your project.
 2. Create a new class that inherits from one of the provided ```*TestFixture```
    classes that matches what are going to test.
@@ -23,9 +27,9 @@ analyzers, code fixes and refactorings using NUnit.
 
 ### Writing Unit Tests
 
-RoslynNUnitLight accepts strings that are marked up with ```[|``` and ```|]```
-to identify a particular span. This could represent the span of an expected
-diagnostic or the text selection before a refactoring is applied.
+RoslynTestKit accepts strings that are marked up with ```[|``` and ```|]``` to identify a particular span. This could represent the span of an expected
+diagnostic or the text selection before a refactoring is applied. 
+Instead of the markers you can also provide line number to locate the place of expected diagnostic.
 
 #### Example: Test presence of a diagnostic
 
