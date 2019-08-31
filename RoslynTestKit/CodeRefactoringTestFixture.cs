@@ -4,8 +4,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Text;
+using RoslynTestKit.Utils;
 
-namespace RoslynNUnitLight
+namespace RoslynTestKit
 {
     public abstract class CodeRefactoringTestFixture : BaseTestFixture
     {

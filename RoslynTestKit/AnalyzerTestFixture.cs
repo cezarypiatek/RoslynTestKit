@@ -4,8 +4,9 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using RoslynTestKit.Utils;
 
-namespace RoslynNUnitLight
+namespace RoslynTestKit
 {
     public abstract class AnalyzerTestFixture : BaseTestFixture
     {

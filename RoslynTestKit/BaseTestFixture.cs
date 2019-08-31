@@ -1,4 +1,4 @@
-﻿namespace RoslynNUnitLight
+﻿namespace RoslynTestKit
 {
     public abstract class BaseTestFixture
     {

@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
-namespace RoslynNUnitLight
+namespace RoslynTestKit
 {
     public static class References
     {

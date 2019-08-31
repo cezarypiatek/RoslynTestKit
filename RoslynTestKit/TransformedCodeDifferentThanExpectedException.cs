@@ -1,4 +1,4 @@
-﻿namespace RoslynNUnitLight
+﻿namespace RoslynTestKit
 {
     public class TransformedCodeDifferentThanExpectedException: RoslynTestKitException
     {

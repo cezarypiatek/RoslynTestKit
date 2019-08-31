@@ -6,8 +6,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Text;
+using RoslynTestKit.Utils;
 
-namespace RoslynNUnitLight
+namespace RoslynTestKit
 {
     public abstract class CodeFixTestFixture : BaseTestFixture
     {
