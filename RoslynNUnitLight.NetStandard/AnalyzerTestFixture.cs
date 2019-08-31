@@ -10,6 +10,7 @@ namespace RoslynNUnitLight
 {
     public abstract class AnalyzerTestFixture : BaseTestFixture
     {
+        protected virtual ImmutableList<MetadataReference> References => null;
         protected abstract DiagnosticAnalyzer CreateAnalyzer();
 
         protected void NoDiagnostic(string code, string diagnosticId)
@@ -22,28 +23,41 @@ namespace RoslynNUnitLight
         protected void NoDiagnostic(Document document, string diagnosticId)
         {
             var diagnostics = GetDiagnostics(document);
-
             Assert.That(diagnostics.Any(d => d.Id == diagnosticId), Is.False);
         }
 
         protected void HasDiagnostic(string markupCode, string diagnosticId)
         {
-            Document document;
-            TextSpan span;
-            Assert.That(TestHelpers.TryGetDocumentAndSpanFromMarkup(markupCode, LanguageName, out document, out span), Is.True);
-
-            HasDiagnostic(document, span, diagnosticId);
+            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
+            var locator = MarkupHelper.GetLocator(markupCode);
+            HasDiagnostic(document, diagnosticId, locator);
         }
 
-        protected void HasDiagnostic(Document document, TextSpan span, string diagnosticId)
+        protected void HasDiagnostic(string code, string diagnosticId, int lineNumber)
         {
-            var diagnostics = GetDiagnostics(document);
-            Assert.That(diagnostics.Length, Is.EqualTo(1));
+            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var locator = new LineLocator(lineNumber);
+            HasDiagnostic(document, diagnosticId, locator);
+        }
 
-            var diagnostic = diagnostics[0];
-            Assert.That(diagnostic.Id, Is.EqualTo(diagnosticId));
-            Assert.That(diagnostic.Location.IsInSource, Is.True);
-            Assert.That(diagnostic.Location.SourceSpan, Is.EqualTo(span));
+        protected void HasDiagnostic(Document document, string diagnosticId, TextSpan span)
+        {
+            var locator = new TextSpanLocator(span);
+            HasDiagnostic(document, diagnosticId, locator);
+        }
+        protected void HasDiagnostic(Document document, string diagnosticId, int lineNumber)
+        {
+            var locator = new LineLocator(lineNumber);
+            HasDiagnostic(document, diagnosticId, locator);
+        }
+
+        protected void HasDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator)
+        {
+            var matchedDiagnostics = GetDiagnostics(document)
+                .Where(d => locator.Match(d.Location))
+                .Count(d => d.Id == diagnosticId);
+
+            Assert.That(matchedDiagnostics, Is.EqualTo(1));
         }
 
         private ImmutableArray<Diagnostic> GetDiagnostics(Document document)
