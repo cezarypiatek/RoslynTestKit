@@ -5,7 +5,7 @@ namespace RoslynTestKit.Utils
 {
     class TextSpanLocator : IDiagnosticLocator
     {
-        private readonly TextSpan _textSpan;
+        private TextSpan _textSpan;
 
         public TextSpanLocator(TextSpan textSpan)
         {
@@ -14,7 +14,7 @@ namespace RoslynTestKit.Utils
 
         public bool Match(Location location)
         {
-            return location.IsInSource && location.SourceSpan == _textSpan;
+            return location.IsInSource &&  _textSpan.IntersectsWith(location.SourceSpan);
         }
 
         public TextSpan GetSpan()

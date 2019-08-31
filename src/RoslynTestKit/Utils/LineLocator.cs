@@ -29,16 +29,40 @@ namespace RoslynTestKit.Utils
 
         public TextSpan GetSpan()
         {
-            return new TextSpan(_startPosition, _endPosition);
+            return TextSpan.FromBounds(_startPosition, _endPosition);
         }
 
         public static LineLocator FromCode(string code, int lineNumber)
         {
-            var lineStart = code.IndexOf("\n", 0, lineNumber,StringComparison.InvariantCulture);
-            var lineEnd = code.IndexOf("\n", 0, lineNumber+1,StringComparison.InvariantCulture);
-            return new LineLocator(lineNumber, lineStart, lineEnd);
+            var lineStart = NthIndexOf(code,'\n',  lineNumber-1);
+            if (lineStart == -1)
+            {
+                lineStart = 0;
+            }
+            var lineEnd = NthIndexOf(code,'\n',  lineNumber);
+            if (lineEnd == -1)
+            {
+                lineEnd = code.Length;
+            }
+            return new LineLocator(lineNumber, lineStart+1, lineEnd-1);
         }
 
+        private static int NthIndexOf(string text, char value, int expectedOccurence)
+        {
+            int count = 0;
+            for (int position = 0; position < text.Length; position++)
+            {
+                if (text[position] == value)
+                {
+                    count++;
+                    if (count == expectedOccurence)
+                    {
+                        return position;
+                    }
+                }
+            }
+            return -1;
+        }
         public static LineLocator FromDocument(Document document, int lineNumber)
         {
             var sourceCode = document.GetSyntaxRootAsync().GetAwaiter().GetResult().ToFullString();
