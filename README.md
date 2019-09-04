@@ -1,6 +1,6 @@
 # RoslynTestKit
 
-A lightweight framework for writing unit tests for Roslyn diagnostic analyzers, code fixes and refactorings.
+A lightweight framework for writing unit tests for Roslyn diagnostic analyzers, code fixes, refactorings and completion providers.
 This is a port of [RoslynNUnitLight.NetStandard](https://github.com/phoenix172/RoslynNUnitLight.NetStandard). The main reasons to create a fork that is independent were:
 
 - make the library independent of the test framework
@@ -9,7 +9,7 @@ This is a port of [RoslynNUnitLight.NetStandard](https://github.com/phoenix172/R
 
 ### Quick Start
 
-1. Install the [SmartAnalyzers.RoslynTestKit](https://www.nuget.org/packages/SmartAnalyzers.RoslynTestKit/)
+1. Install the [SmartAnalyzers.RoslynTestKit ](https://www.nuget.org/packages/SmartAnalyzers.RoslynTestKit/)
    package from NuGet into your project.
 2. Create a new class that inherits from one of the provided ```*TestFixture```
    classes that matches what are going to test.
@@ -17,13 +17,17 @@ This is a port of [RoslynNUnitLight.NetStandard](https://github.com/phoenix172/R
    * [```DiagnosticAnalyzer```](http://source.roslyn.io/#Microsoft.CodeAnalysis/DiagnosticAnalyzer/DiagnosticAnalyzer.cs) = ```AnalyzerTestFixture``` 
    * [```CodeFixProvider```](http://source.roslyn.io/#Microsoft.CodeAnalysis.Workspaces/CodeFixes/CodeFixProvider.cs) = ```CodeFixTestFixture```
    * [```CodeRefactoringProvider```](http://source.roslyn.io/#Microsoft.CodeAnalysis.Workspaces/CodeRefactorings/CodeRefactoringProvider.cs) = ```CodeRefactoringTestFixture``` 
+   * [```CompletionProvider```](http://source.roslyn.io/#Microsoft.CodeAnalysis.Features/Completion/CompletionProvider.cs) = ```CompletionProviderFixture``` 
 
 3. Override the ```LanguageName``` property and return the appropriate value
    from [```Microsoft.CodeAnalysis.LanguageNames```](http://source.roslyn.io/#Microsoft.CodeAnalysis/Symbols/LanguageNames.cs),
    depending on what language your tests will target.
 4. Override the ```CreateAnalyzer``` or ```CreateProvider``` method and return
    an instance of your analyzer or provider.
-5. Write tests!
+
+5. Override the `References` property if you want to provide external dependencies for parsed code.
+
+6. Write tests!
 
 ### Writing Unit Tests
 
@@ -119,5 +123,49 @@ class C
 }";
 
     TestCodeRefactoring(markupCode, expected);
+}
+```
+
+#### Example: Test completion provider based on expected suggestions
+
+```csharp
+[Test]
+public void SimpleTest()
+{
+    const string markupCode = @"
+class C
+{
+    void M()
+    {
+        var s = string.Format([||], 42);
+    }
+}";
+
+    TestCompletion(markupCode, new []
+    {
+        "first expected suggestion",
+        "second expected suggestion"
+    });
+}
+```
+
+#### Example: Test completion provider based on custom checks
+```csharp
+[Test]
+public void SimpleTest()
+{
+    const string markupCode = @"
+class C
+{
+    void M()
+    {
+        var s = string.Format([||], 42);
+    }
+}";
+
+    TestCompletion(markupCode, (ImmutableArray<CompletionItem> suggestions) =>
+    {
+        //TODO: Custom assertions
+    });
 }
 ```
