@@ -10,7 +10,6 @@ namespace RoslynTestKit
 {
     public abstract class CodeRefactoringTestFixture : BaseTestFixture
     {
-        protected virtual ImmutableList<MetadataReference> References => null;
         protected abstract CodeRefactoringProvider CreateProvider();
 
         protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex=0)

@@ -10,7 +10,6 @@ namespace RoslynTestKit
 {
     public abstract class AnalyzerTestFixture : BaseTestFixture
     {
-        protected virtual ImmutableList<MetadataReference> References => null;
         protected abstract DiagnosticAnalyzer CreateAnalyzer();
 
         protected void NoDiagnostic(string code, string diagnosticId)

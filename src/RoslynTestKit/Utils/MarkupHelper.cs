@@ -7,22 +7,25 @@ namespace RoslynTestKit.Utils
 {
     internal static class MarkupHelper
     {
-        public static Document GetDocumentFromMarkup(string markup, string languageName, ImmutableList<MetadataReference> references = null)
+        public static Document GetDocumentFromMarkup(string markup, string languageName, MetadataReference[] references = null)
         {
             var code = markup.Replace("[|", "").Replace("|]", "");
             return GetDocumentFromCode(code, languageName, references);
         }
 
-        public static Document GetDocumentFromCode(string code, string languageName, ImmutableList<MetadataReference> references)
+        public static Document GetDocumentFromCode(string code, string languageName, MetadataReference[] references)
         {
-            references = references ?? ImmutableList<MetadataReference>.Empty;
-            references = references
-                .Add(References.Core)
-                .Add(References.Linq);
+            var immutableReferencesBuilder = ImmutableArray.CreateBuilder<MetadataReference>();
+            if (references != null)
+            {
+                immutableReferencesBuilder.AddRange(references);
+            }
+            immutableReferencesBuilder.Add(ReferenceSource.Core);
+            immutableReferencesBuilder.Add(ReferenceSource.Linq);
 
             return new AdhocWorkspace()
                 .AddProject("TestProject", languageName)
-                .AddMetadataReferences(references)
+                .AddMetadataReferences(immutableReferencesBuilder.ToImmutable())
                 .AddDocument("TestDocument", code);
         }
 

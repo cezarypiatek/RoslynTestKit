@@ -11,8 +11,6 @@ namespace RoslynTestKit
 {
     public abstract class CompletionProviderFixture : BaseTestFixture
     {
-        protected virtual ImmutableList<MetadataReference> References => null;
-
         protected void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger=null)
         {
             var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
