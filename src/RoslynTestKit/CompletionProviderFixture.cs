@@ -17,7 +17,7 @@ namespace RoslynTestKit
         {
             var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
             var locator = MarkupHelper.GetLocator(markupCode);
-            var assertion = CreateAssertionBasedOnExpectedSet(expectedCompletions);
+            var assertion = CreateAssertionBasedOnExpectedSet(expectedCompletions, locator);
             VerifyExpectations(document, locator, trigger, assertion);
         }
 
@@ -31,7 +31,7 @@ namespace RoslynTestKit
         protected void TestCompletion(Document document, TextSpan span, string[] expectedCompletions, CompletionTrigger? trigger = null)
         {
             var locator = new TextSpanLocator(span);
-            var assertion = CreateAssertionBasedOnExpectedSet(expectedCompletions);
+            var assertion = CreateAssertionBasedOnExpectedSet(expectedCompletions, locator);
             VerifyExpectations(document, locator, trigger, assertion);
         }
 
@@ -41,7 +41,7 @@ namespace RoslynTestKit
             VerifyExpectations(document, locator, trigger, assertion);
         }
 
-        private static Action<ImmutableArray<CompletionItem>> CreateAssertionBasedOnExpectedSet(string[] expectedCompletions)
+        private static Action<ImmutableArray<CompletionItem>> CreateAssertionBasedOnExpectedSet(string[] expectedCompletions, IDiagnosticLocator locator)
         {
             return (items) =>
             {
@@ -50,7 +50,7 @@ namespace RoslynTestKit
 
                 if (missingSuggestions.Count > 0)
                 {
-                    throw RoslynTestKitException.CannotFindSuggestion(missingSuggestions, items);
+                    throw RoslynTestKitException.CannotFindSuggestion(missingSuggestions, items, locator);
                 }
             };
         }

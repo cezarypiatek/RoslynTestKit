@@ -43,7 +43,7 @@ namespace RoslynTestKit
             var codeRefactorings = GetCodeRefactorings(document, locator);
             if (codeRefactorings.Length < refactoringIndex + 1)
             {
-                throw RoslynTestKitException.CodeRefactoringNotFound(refactoringIndex, codeRefactorings);
+                throw RoslynTestKitException.CodeRefactoringNotFound(refactoringIndex, codeRefactorings, locator);
             }
             Verify.CodeAction(codeRefactorings[refactoringIndex], document, expected);
         }

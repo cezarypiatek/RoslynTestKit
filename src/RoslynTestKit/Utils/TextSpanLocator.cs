@@ -21,5 +21,7 @@ namespace RoslynTestKit.Utils
         {
             return _textSpan;
         }
+
+        public string Description() => $"[{_textSpan.Start}...{_textSpan.End}]";
     }
 }

@@ -7,5 +7,7 @@ namespace RoslynTestKit.Utils
     {
         bool Match(Location location);
         TextSpan GetSpan();
+
+        string Description();
     }
 }

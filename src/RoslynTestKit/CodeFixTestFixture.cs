@@ -64,7 +64,7 @@ namespace RoslynTestKit
             var codeFixes = GetCodeFixes(document, locator, descriptor);
             if (codeFixes.Length < codeFixIndex + 1)
             {
-                throw RoslynTestKitException.CodeFixNotFound(codeFixIndex, codeFixes);
+                throw RoslynTestKitException.CodeFixNotFound(codeFixIndex, codeFixes, locator);
             }
             Verify.CodeAction(codeFixes[codeFixIndex], document, expected);
         }
