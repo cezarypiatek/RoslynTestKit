@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
 
 namespace RoslynTestKit
 {
@@ -6,6 +7,6 @@ namespace RoslynTestKit
     {
         protected abstract string LanguageName { get; }
 
-        protected virtual MetadataReference[] References => null;
+        protected virtual IReadOnlyCollection<MetadataReference> References => null;
     }
 }

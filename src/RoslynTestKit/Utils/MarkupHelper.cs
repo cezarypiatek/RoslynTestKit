@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -7,13 +8,13 @@ namespace RoslynTestKit.Utils
 {
     internal static class MarkupHelper
     {
-        public static Document GetDocumentFromMarkup(string markup, string languageName, MetadataReference[] references = null)
+        public static Document GetDocumentFromMarkup(string markup, string languageName, IReadOnlyCollection<MetadataReference> references = null)
         {
             var code = markup.Replace("[|", "").Replace("|]", "");
             return GetDocumentFromCode(code, languageName, references);
         }
 
-        public static Document GetDocumentFromCode(string code, string languageName, MetadataReference[] references)
+        public static Document GetDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> references)
         {
             var immutableReferencesBuilder = ImmutableArray.CreateBuilder<MetadataReference>();
             if (references != null)
