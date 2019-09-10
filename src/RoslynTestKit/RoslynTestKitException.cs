@@ -15,9 +15,10 @@ namespace RoslynTestKit
         {
         }
 
-        public static RoslynTestKitException UnexpectedDiagnostic(string diagnosticId)
+        public static RoslynTestKitException UnexpectedDiagnostic(string diagnosticId, IDiagnosticLocator locator=null)
         {
-            return new RoslynTestKitException($"Found reported diagnostic '{diagnosticId}' in spite of the expectations ");
+            var description = locator != null ? $"at {locator.Description()}" : string.Empty;
+            return new RoslynTestKitException($"Found reported diagnostic '{diagnosticId}' in spite of the expectations {description}");
         }
 
         public static RoslynTestKitException DiagnosticNotFound(string diagnosticId, IDiagnosticLocator locator, Diagnostic[] reportedDiagnostics)
