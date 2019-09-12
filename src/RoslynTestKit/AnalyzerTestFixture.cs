@@ -10,7 +10,6 @@ namespace RoslynTestKit
 {
     public abstract class AnalyzerTestFixture : BaseTestFixture
     {
-        protected virtual ImmutableList<MetadataReference> References => null;
         protected abstract DiagnosticAnalyzer CreateAnalyzer();
 
         protected void NoDiagnostic(string code, string diagnosticId)
@@ -19,13 +18,24 @@ namespace RoslynTestKit
             NoDiagnostic(document, diagnosticId);
         }
 
-        protected void NoDiagnostic(Document document, string diagnosticId)
+        protected void NoDiagnosticAtLine(string code, string diagnosticId, int lineNumber)
+        {
+            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var locator = LineLocator.FromCode(code, lineNumber);
+            NoDiagnostic(document, diagnosticId, locator);
+        }
+
+        protected void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator=null)
         {
             var diagnostics = GetDiagnostics(document);
+            if (locator != null)
+            {
+                diagnostics = diagnostics.Where(x => locator.Match(x.Location)).ToImmutableArray();
+            }
             var hasDiagnostic = diagnostics.Any(d => d.Id == diagnosticId);
             if (hasDiagnostic)
             {
-                throw RoslynTestKitException.UnexpectedDiagnostic(diagnosticId);
+                throw RoslynTestKitException.UnexpectedDiagnostic(diagnosticId, locator);
             }
         }
 

@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 namespace RoslynTestKit.Utils
@@ -31,6 +30,8 @@ namespace RoslynTestKit.Utils
         {
             return TextSpan.FromBounds(_startPosition, _endPosition);
         }
+
+        public string Description() => $"line {line}";
 
         public static LineLocator FromCode(string code, int lineNumber)
         {

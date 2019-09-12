@@ -10,7 +10,6 @@ namespace RoslynTestKit
 {
     public abstract class CodeRefactoringTestFixture : BaseTestFixture
     {
-        protected virtual ImmutableList<MetadataReference> References => null;
         protected abstract CodeRefactoringProvider CreateProvider();
 
         protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex=0)
@@ -43,7 +42,7 @@ namespace RoslynTestKit
             var codeRefactorings = GetCodeRefactorings(document, locator);
             if (codeRefactorings.Length < refactoringIndex + 1)
             {
-                throw RoslynTestKitException.CodeRefactoringNotFound(refactoringIndex, codeRefactorings);
+                throw RoslynTestKitException.CodeRefactoringNotFound(refactoringIndex, codeRefactorings, locator);
             }
             Verify.CodeAction(codeRefactorings[refactoringIndex], document, expected);
         }

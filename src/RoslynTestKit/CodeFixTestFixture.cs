@@ -12,7 +12,6 @@ namespace RoslynTestKit
 {
     public abstract class CodeFixTestFixture : BaseTestFixture
     {
-        protected virtual ImmutableList<MetadataReference> References => null;
         protected abstract CodeFixProvider CreateProvider();
 
         protected void TestCodeFix(string markupCode, string expected, string diagnosticId, int codeFixIndex = 0)
@@ -64,7 +63,7 @@ namespace RoslynTestKit
             var codeFixes = GetCodeFixes(document, locator, descriptor);
             if (codeFixes.Length < codeFixIndex + 1)
             {
-                throw RoslynTestKitException.CodeFixNotFound(codeFixIndex, codeFixes);
+                throw RoslynTestKitException.CodeFixNotFound(codeFixIndex, codeFixes, locator);
             }
             Verify.CodeAction(codeFixes[codeFixIndex], document, expected);
         }

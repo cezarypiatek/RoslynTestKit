@@ -35,6 +35,24 @@ RoslynTestKit accepts strings that are marked up with ```[|``` and ```|]``` to i
 diagnostic or the text selection before a refactoring is applied. 
 Instead of the markers you can also provide line number to locate the place of expected diagnostic.
 
+### External dependencies
+
+Every `*TestFixture` has a `References` property which allows providing external dependencies required by the test case code/markup. There is also a couple of helper methods in `ReferenceSource` class that allow to easily define these dependencies. A sample setup for analyzer test with external dependencies can looks as follows:
+
+```csharp
+public class SampleAnalyzerTest : AnalyzerTestFixture
+{
+    protected override string LanguageName => LanguageNames.CSharp;
+    
+    protected override DiagnosticAnalyzer CreateAnalyzer() => new SampleAnalyzer();
+    
+    protected override IReadOnlyCollection<MetadataReference> References => new[]
+    {
+        ReferenceSource.FromType<ReaderWriterLock>()        
+    };
+}
+```
+
 #### Example: Test presence of a diagnostic
 
 ```C#
