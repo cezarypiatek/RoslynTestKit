@@ -187,3 +187,7 @@ class C
     });
 }
 ```
+
+## Code comparision
+
+In case of discrepancy between the expected code and the generated one, when testing CodeFixes and CodeRefactorings, the `TransformedCodeDifferentThanExpectedException` is thrown. However, when the test is run with the attached debugger a `diff tool` is launched to present the differences. RoslynTestKit is using under the hood the [ApprovalTests.Net](https://github.com/approvals/ApprovalTests.Net) so a wide range of diff tools on `Windows`, `Linux` and `Mac` are supported.
