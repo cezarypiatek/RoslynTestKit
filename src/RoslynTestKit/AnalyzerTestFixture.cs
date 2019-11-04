@@ -25,7 +25,7 @@ namespace RoslynTestKit
             NoDiagnostic(document, diagnosticId, locator);
         }
 
-        protected void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator=null)
+        protected void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator = null)
         {
             var diagnostics = GetDiagnostics(document);
             if (locator != null)
@@ -88,11 +88,7 @@ namespace RoslynTestKit
             var builder = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var diagnostic in compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result)
             {
-                var location = diagnostic.Location;
-                if (location.IsInSource && location.SourceTree == tree)
-                {
-                    builder.Add(diagnostic);
-                }
+                builder.Add(diagnostic);
             }
 
             return builder.ToImmutable();
