@@ -9,21 +9,27 @@ using RoslynTestKit.Utils;
 
 namespace RoslynTestKit
 {
-    public class RoslynTestKitException: Exception
+    public class RoslynTestKitException : Exception
     {
         public RoslynTestKitException(string message) : base(message)
         {
         }
 
-        public static RoslynTestKitException UnexpectedDiagnostic(string diagnosticId, IDiagnosticLocator locator=null)
+        public static RoslynTestKitException UnexpectedDiagnostic(string diagnosticId, IDiagnosticLocator locator = null)
         {
             var description = locator != null ? $"at {locator.Description()}" : string.Empty;
             return new RoslynTestKitException($"Found reported diagnostic '{diagnosticId}' in spite of the expectations {description}");
         }
 
+        internal static Exception ExceptionInAnalyzer(
+            LocalizableString description)
+        {
+            return new RoslynTestKitException(description.ToString());
+        }
+
         public static RoslynTestKitException DiagnosticNotFound(string diagnosticId, IDiagnosticLocator locator, Diagnostic[] reportedDiagnostics)
         {
-            var reportedDiagnosticInfo = reportedDiagnostics.MergeWithComma(x=>x.Id, title: "Reported issues: ");
+            var reportedDiagnosticInfo = reportedDiagnostics.MergeWithComma(x => x.Id, title: "Reported issues: ");
             var message = $"There is no issue reported for {diagnosticId} at {locator.Description()}.{reportedDiagnosticInfo}";
             return new RoslynTestKitException(message);
         }
@@ -48,7 +54,7 @@ namespace RoslynTestKit
             return new RoslynTestKitException($"Found reported CodeRefactorings '{refactoringDescriptions}' in spite of the expectations ");
         }
 
-        private static string GetActionsDescription(ImmutableArray<CodeAction> codeFixes, string title=null)
+        private static string GetActionsDescription(ImmutableArray<CodeAction> codeFixes, string title = null)
         {
             if (codeFixes.Length == 0)
             {
@@ -65,13 +71,13 @@ namespace RoslynTestKit
 
         public static RoslynTestKitException MoreThanOneOperationForCodeAction(CodeAction codeAction, List<CodeActionOperation> operations)
         {
-            var foundOperationDescriptions = operations.MergeWithComma(x=>x.Title, title: " Found operations: ");
+            var foundOperationDescriptions = operations.MergeWithComma(x => x.Title, title: " Found operations: ");
             return new RoslynTestKitException($"There is more than one operation associated with '{codeAction.Title}'.{foundOperationDescriptions}");
         }
 
         public static Exception CannotFindSuggestion(IReadOnlyList<string> missingCompletion, ImmutableArray<CompletionItem> resultItems, IDiagnosticLocator locator)
         {
-            var foundSuggestionDescription = resultItems.MergeAsBulletList(x=>x.DisplayText, title: "\r\nFound suggestions:\r\n");
+            var foundSuggestionDescription = resultItems.MergeAsBulletList(x => x.DisplayText, title: "\r\nFound suggestions:\r\n");
             return new RoslynTestKitException($"Cannot get suggestions:\r\n{missingCompletion.MergeAsBulletList()}\r\nat{locator.Description()}{foundSuggestionDescription}");
         }
     }
