@@ -12,6 +12,17 @@ namespace RoslynTestKit
     {
         protected abstract DiagnosticAnalyzer CreateAnalyzer();
 
+        protected void NoException(string code)
+        {
+            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var diagnostics = GetDiagnostics(document);
+            var diagnostic = diagnostics.FirstOrDefault(d => d.Id == "AD0001");
+            if (diagnostic != null)
+            {
+                throw RoslynTestKitException.ExceptionInAnalyzer(diagnostic.Descriptor.Description);
+            }
+        }
+
         protected void NoDiagnostic(string code, string diagnosticId)
         {
             var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
