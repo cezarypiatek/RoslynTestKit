@@ -22,9 +22,9 @@ namespace RoslynTestKit
         }
 
         internal static Exception ExceptionInAnalyzer(
-            LocalizableString description)
+            string description)
         {
-            return new RoslynTestKitException(description.ToString());
+            return new RoslynTestKitException(description);
         }
 
         public static RoslynTestKitException DiagnosticNotFound(string diagnosticId, IDiagnosticLocator locator, Diagnostic[] reportedDiagnostics)
