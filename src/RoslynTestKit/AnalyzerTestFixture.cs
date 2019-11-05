@@ -19,7 +19,7 @@ namespace RoslynTestKit
             var diagnostic = diagnostics.FirstOrDefault(d => d.Id == "AD0001");
             if (diagnostic != null)
             {
-                throw RoslynTestKitException.ExceptionInAnalyzer(diagnostic.GetMessage(Thread.CurrentThread.CurrentCulture));
+                throw RoslynTestKitException.ExceptionInAnalyzer(diagnostic);
             }
         }
 
