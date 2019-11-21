@@ -8,13 +8,13 @@ namespace RoslynTestKit.Utils
 {
     internal static class MarkupHelper
     {
-        public static Document GetDocumentFromMarkup(string markup, string languageName, IReadOnlyCollection<MetadataReference> references = null)
+        public static Document GetDocumentFromMarkup(string markup, string languageName, IReadOnlyCollection<MetadataReference> references, string projectName = null, string documentName = null)
         {
             var code = markup.Replace("[|", "").Replace("|]", "");
-            return GetDocumentFromCode(code, languageName, references);
+            return GetDocumentFromCode(code, languageName, references, projectName, documentName);
         }
 
-        public static Document GetDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> references)
+        public static Document GetDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> references, string projectName= null, string documentName= null)
         {
             var immutableReferencesBuilder = ImmutableArray.CreateBuilder<MetadataReference>();
             if (references != null)
@@ -25,9 +25,9 @@ namespace RoslynTestKit.Utils
             immutableReferencesBuilder.Add(ReferenceSource.Linq);
 
             return new AdhocWorkspace()
-                .AddProject("TestProject", languageName)
+                .AddProject(projectName ?? "TestProject", languageName)
                 .AddMetadataReferences(immutableReferencesBuilder.ToImmutable())
-                .AddDocument("TestDocument", code);
+                .AddDocument(documentName ?? "TestDocument", code);
         }
 
         public static IDiagnosticLocator GetLocator(string markupCode)

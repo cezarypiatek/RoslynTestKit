@@ -73,6 +73,27 @@ class C
 }
 ```
 
+#### Example: Override test project and test document names
+
+```C#
+[Test]
+public void AutoPropDeclaredAndUsedInConstructor()
+{
+    const string markup = @"
+class C
+{
+	public bool MyProperty { get; [|private set;|] }
+	public C(bool f)
+	{
+		MyProperty = f;
+	}
+}";
+    var document = this.CreateDocumentFromMarkup(markup, "MySampleProject", "MySampleDocument");
+    var diagnosticLocation = this.GetMarkerLocation(markup);
+    HasDiagnostic(document, DiagnosticIds.UseGetterOnlyAutoProperty, diagnosticLocation);
+}
+```
+
 #### Example: Test absence of a diagnostic
 
 ```C#
