@@ -212,3 +212,37 @@ class C
 ## Code comparision
 
 In case of discrepancy between the expected code and the generated one, when testing CodeFixes and CodeRefactorings, the `TransformedCodeDifferentThanExpectedException` is thrown. However, when the test is run with the attached debugger a `diff tool` is launched to present the differences. RoslynTestKit is using under the hood the [ApprovalTests.Net](https://github.com/approvals/ApprovalTests.Net) so a wide range of diff tools on `Windows`, `Linux` and `Mac` are supported.
+
+![example visual diff](doc/diff.png)
+
+If the debugger is not attached, an inline text diff is presented in the console. An example diff can looks as follows:
+
+```plaintext
+RoslynTestKit.TransformedCodeDifferentThanExpectedException : Transformed code is different than expected:
+===========================
+From line 25:
+- ················ZipCode·=·src.MainAddress.ZipCode,
+===========================
+From line 29:
+- ············dst.Addresses·=·src.Addresses.ConvertAll(srcAddress·=>·new·AddressDTO()
+- ············{
+- ················City·=·srcAddress.City,
+- ················ZipCode·=·srcAddress.ZipCode,
+- ················Street·=·srcAddress.Street,
+- ················FlatNo·=·srcAddress.FlatNo,
+- ················BuildingNo·=·srcAddress.BuildingNo
+- ············}).AsReadOnly();
+- ············dst.UnitId·=·src.Unit.Id;
+===========================
+From line 71:
+- ········public·string·ZipCode·{·get;·set;·}
++ ········public·string·ZipCode·{·get;·}
+===========================
+From line 94:
+- ········public·List<AddressEntity>·Addresses·{·get;·set;·}
+- ········public·UnitEntity·Unit·{·get;·set;·}
+===========================
+From line 124:
+- ········public·string·BankName·{·get;·set;·}
++ ············public·string·BankName·{·get;·set;·}
+```
