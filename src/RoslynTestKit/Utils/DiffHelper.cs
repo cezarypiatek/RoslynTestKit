@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using ApprovalTests.Reporters;
 using DiffPlex;
+using DiffPlex.Chunkers;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
 
@@ -15,45 +16,67 @@ namespace RoslynTestKit.Utils
         {
             var differ = new Differ();
             var diffBuilder = new InlineDiffBuilder(differ);
-            var diff = diffBuilder.BuildDiffModel(expected, actual, false);
+            var diff = diffBuilder.BuildDiffModel(expected, actual, false, false, new LineEndingsPreservingChunker());
             
             var sb = new StringBuilder();
             var lastChanged = false;
-            int? lastLine = null;
+            int lastLine = 1;
             foreach (var line in diff.Lines)
             {
-                
                 if (line.Type != ChangeType.Unchanged)
                 {
                     if (lastChanged == false)
                     {
                         sb.AppendLine("===========================");
-                        var linePosition = line.Position ?? lastLine+1;
-                        if (linePosition != null) 
-                        {
-                            sb.AppendLine($"From line {linePosition}:");
-                        }
+                        var linePosition = line.Position ?? lastLine;
+                        sb.AppendLine($"From line {linePosition}:");
                     }
 
                     lastChanged = true;
                     sb.Append(GetLinePrefix(line));
-                    sb.AppendLine(PresentWhitespaces(line.Text));
+                    sb.Append(PresentWhitespaces(line.Text));
                 }
                 else
                 {
                     lastChanged = false;
                 }
 
-                lastLine = line.Position;
+                if (line.Type != ChangeType.Inserted)
+                {
+                    lastLine++;
+                }
             }
 
             return sb.ToString();
         }
 
+        private static readonly string CrLfVisualization = $"\u240D\u240A{Environment.NewLine}";
+        private static readonly string LfVisualization = $"\u240A{Environment.NewLine}";
+        private static readonly string CrVisualization = $"\u240D{Environment.NewLine}";
+        private static readonly char SpaceVisualization = '\u00B7';
+        private static readonly char TabVisualization = '\u2192';
+
         private static string PresentWhitespaces(string lineText)
         {
-            return lineText.Replace(' ', '\u00B7')
-                .Replace('\t', '\u2192');
+            var middleText = lineText.Replace(' ', SpaceVisualization)
+                .Replace('\t', TabVisualization);
+            
+            if(middleText.EndsWith("\r\n"))
+            {
+                return middleText.Replace("\r\n", CrLfVisualization);
+            }
+            
+            if(middleText.EndsWith("\n"))
+            {
+                return middleText.Replace("\n", LfVisualization);
+            }
+            
+            if(middleText.EndsWith("\r"))
+            {
+                return middleText.Replace("\r", CrVisualization);
+            }
+
+            return middleText;
         }
 
         private static string GetLinePrefix(DiffPiece line)
@@ -73,7 +96,7 @@ namespace RoslynTestKit.Utils
             }
         }
 
-        public static void TryToReportDiff(string expectedCode, string text)
+        public static void TryToReportDiffWithExternalTool(string expectedCode, string text)
         {
             if (Debugger.IsAttached)
             {

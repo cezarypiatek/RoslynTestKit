@@ -31,7 +31,7 @@ namespace RoslynTestKit
             var actualCode = sourceText.ToString();
             if (actualCode != expectedCode)
             {
-                DiffHelper.TryToReportDiff(expectedCode, actualCode);
+                DiffHelper.TryToReportDiffWithExternalTool(expectedCode, actualCode);
                 var diff = DiffHelper.GenerateInlineDiff(expectedCode, actualCode);
                 throw new  TransformedCodeDifferentThanExpectedException(actualCode, expectedCode, diff);
             }
