@@ -8,26 +8,33 @@ namespace RoslynTestKit.Utils
 {
     internal static class MarkupHelper
     {
-        public static Document GetDocumentFromMarkup(string markup, string languageName, IReadOnlyCollection<MetadataReference> references = null)
+        public static Document GetDocumentFromMarkup(string markup, string languageName, IReadOnlyCollection<MetadataReference> references, string projectName = null, string documentName = null)
         {
             var code = markup.Replace("[|", "").Replace("|]", "");
-            return GetDocumentFromCode(code, languageName, references);
+            return GetDocumentFromCode(code, languageName, references, projectName, documentName);
         }
 
-        public static Document GetDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> references)
+        public static Document GetDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> references, string projectName= null, string documentName= null)
+        {
+            var metadataReferences = CreateMetadataReferences(references);
+
+            return new AdhocWorkspace()
+                .AddProject(projectName ?? "TestProject", languageName)
+                .AddMetadataReferences(metadataReferences)
+                .AddDocument(documentName ?? "TestDocument", code);
+        }
+
+        private static ImmutableArray<MetadataReference> CreateMetadataReferences(IReadOnlyCollection<MetadataReference> references)
         {
             var immutableReferencesBuilder = ImmutableArray.CreateBuilder<MetadataReference>();
             if (references != null)
             {
                 immutableReferencesBuilder.AddRange(references);
             }
+
             immutableReferencesBuilder.Add(ReferenceSource.Core);
             immutableReferencesBuilder.Add(ReferenceSource.Linq);
-
-            return new AdhocWorkspace()
-                .AddProject("TestProject", languageName)
-                .AddMetadataReferences(immutableReferencesBuilder.ToImmutable())
-                .AddDocument("TestDocument", code);
+            return immutableReferencesBuilder.ToImmutable();
         }
 
         public static IDiagnosticLocator GetLocator(string markupCode)

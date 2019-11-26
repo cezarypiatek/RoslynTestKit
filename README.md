@@ -73,6 +73,27 @@ class C
 }
 ```
 
+#### Example: Override test project and test document names
+
+```C#
+[Test]
+public void AutoPropDeclaredAndUsedInConstructor()
+{
+    const string markup = @"
+class C
+{
+	public bool MyProperty { get; [|private set;|] }
+	public C(bool f)
+	{
+		MyProperty = f;
+	}
+}";
+    var document = this.CreateDocumentFromMarkup(markup, "MySampleProject", "MySampleDocument");
+    var diagnosticLocation = this.GetMarkerLocation(markup);
+    HasDiagnostic(document, DiagnosticIds.UseGetterOnlyAutoProperty, diagnosticLocation);
+}
+```
+
 #### Example: Test absence of a diagnostic
 
 ```C#
@@ -190,4 +211,39 @@ class C
 
 ## Code comparision
 
-In case of discrepancy between the expected code and the generated one, when testing CodeFixes and CodeRefactorings, the `TransformedCodeDifferentThanExpectedException` is thrown. However, when the test is run with the attached debugger a `diff tool` is launched to present the differences. RoslynTestKit is using under the hood the [ApprovalTests.Net](https://github.com/approvals/ApprovalTests.Net) so a wide range of diff tools on `Windows`, `Linux` and `Mac` are supported.
+In case of discrepancy between the expected code and the generated one, when testing `CodeFixes` and `CodeRefactorings`, the `TransformedCodeDifferentThanExpectedException` is thrown. The Text difference is presented in the console using inline diff format, which looks as follows:
+
+```plaintext
+RoslynTestKit.TransformedCodeDifferentThanExpectedException : Transformed code is different than expected:
+===========================
+From line 25:
+- ················ZipCode·=·src.MainAddress.ZipCode,␍␊
+===========================
+From line 29:
+- ············dst.Addresses·=·src.Addresses.ConvertAll(srcAddress·=>·new·AddressDTO()␍␊
+- ············{␍␊
+- ················City·=·srcAddress.City,␍␊
+- ················ZipCode·=·srcAddress.ZipCode,␍␊
+- ················Street·=·srcAddress.Street,␍␊
+- ················FlatNo·=·srcAddress.FlatNo,␍␊
+- ················BuildingNo·=·srcAddress.BuildingNo␍␊
+- ············}).AsReadOnly();␍␊
+- ············dst.UnitId·=·src.Unit.Id;␍␊
+===========================
+From line 71:
+- ········public·string·ZipCode·{·get;·set;·}␍␊
++ ········public·string·ZipCode·{·get;·}␍␊
+===========================
+From line 94:
+- ········public·List<AddressEntity>·Addresses·{·get;·set;·}␍␊
+- ········public·UnitEntity·Unit·{·get;·set;·}␍␊
+===========================
+From line 124:
+- ········public·string·BankName·{·get;·set;·}␍␊
++ ············public·string·BankName·{·get;·set;·}␍␊
+```
+
+
+However, when the test is run with the attached debugger, an external `diff tool` is launched to present the differences. RoslynTestKit is using under the hood the [ApprovalTests.Net](https://github.com/approvals/ApprovalTests.Net) so a wide range of diff tools on `Windows`, `Linux` and `Mac` are supported.
+
+![example visual diff](doc/diff.png)
