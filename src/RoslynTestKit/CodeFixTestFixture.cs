@@ -5,6 +5,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using RoslynTestKit.Utils;
 
@@ -13,6 +14,8 @@ namespace RoslynTestKit
     public abstract class CodeFixTestFixture : BaseTestFixture
     {
         protected abstract CodeFixProvider CreateProvider();
+
+        protected virtual IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => null;
 
         protected void TestCodeFix(string markupCode, string expected, string diagnosticId, int codeFixIndex = 0)
         {
@@ -68,9 +71,25 @@ namespace RoslynTestKit
             Verify.CodeAction(codeFixes[codeFixIndex], document, expected);
         }
 
-        private static IEnumerable<Diagnostic> GetReportedDiagnostics(Document document, IDiagnosticLocator locator)
+        private IEnumerable<Diagnostic> GetReportedDiagnostics(Document document, IDiagnosticLocator locator)
         {
-            return document.GetSemanticModelAsync().Result.GetDiagnostics().Where(d=> locator.Match(d.Location));
+            return GetAllReportedDiagnostics(document).Where(d => locator.Match(d.Location));
+        }
+
+        private IEnumerable<Diagnostic> GetAllReportedDiagnostics(Document document)
+        {
+            var additionalAnalyzers = CreateAdditionalAnalyzers();
+            if (additionalAnalyzers != null)
+            {
+                var documentTree = document.GetSyntaxTreeAsync().GetAwaiter().GetResult();
+
+                return document.Project.GetCompilationAsync().GetAwaiter().GetResult()
+                    .WithAnalyzers(additionalAnalyzers.ToImmutableArray())
+                    .GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
+                    .Where(x=>x.Location.SourceTree == documentTree);
+            }
+
+            return document.GetSemanticModelAsync().GetAwaiter().GetResult().GetDiagnostics();
         }
 
         private ImmutableArray<CodeAction> GetCodeFixes(Document document, IDiagnosticLocator locator, DiagnosticDescriptor descriptor)
@@ -78,14 +97,13 @@ namespace RoslynTestKit
             var builder = ImmutableArray.CreateBuilder<CodeAction>();
             var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
             var context = new CodeFixContext(document, diagnostic, (a, _) => builder.Add(a), CancellationToken.None);
-
             var provider = CreateProvider();
-            provider.RegisterCodeFixesAsync(context).Wait();
+            provider.RegisterCodeFixesAsync(context).GetAwaiter().GetResult();
 
             return builder.ToImmutable();
         }
 
-        private static Diagnostic FindOrCreateDiagnosticForDescriptor(Document document, DiagnosticDescriptor descriptor, IDiagnosticLocator locator)
+        private Diagnostic FindOrCreateDiagnosticForDescriptor(Document document, DiagnosticDescriptor descriptor, IDiagnosticLocator locator)
         {
             var reportedDiagnostics = GetReportedDiagnostics(document, locator).ToList();
             var diagnostic = reportedDiagnostics.FirstOrDefault(x => x.Id == descriptor.Id);
