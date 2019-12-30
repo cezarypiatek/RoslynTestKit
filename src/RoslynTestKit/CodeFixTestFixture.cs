@@ -35,19 +35,22 @@ namespace RoslynTestKit
         {
             var document = MarkupHelper.GetDocumentFromMarkup(code, LanguageName, References);
             var locator = LineLocator.FromCode(code, line);
-            TestCodeFix(document, expected, descriptor, locator, codeFixIndex);
+            var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
+            TestCodeFix(document, expected, diagnostic, locator, codeFixIndex);
         }
         protected void TestCodeFix(string markupCode, string expected, DiagnosticDescriptor descriptor, int codeFixIndex = 0)
         {
             var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
             var locator = MarkupHelper.GetLocator(markupCode);
-            TestCodeFix(document, expected, descriptor, locator, codeFixIndex);
+            var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
+            TestCodeFix(document, expected, diagnostic, locator, codeFixIndex);
         }
 
         protected void TestCodeFix(Document document, string expected, DiagnosticDescriptor descriptor, TextSpan span, int codeFixIndex = 0)
         {
-           var locator = new TextSpanLocator(span);
-           TestCodeFix(document, expected, descriptor, locator, codeFixIndex);
+            var locator = new TextSpanLocator(span);
+            var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
+            TestCodeFix(document, expected, diagnostic, locator, codeFixIndex);
         }
 
         private void TestCodeFix(Document document, string expected, string diagnosticId, IDiagnosticLocator locator, int codeFixIndex)
@@ -58,12 +61,12 @@ namespace RoslynTestKit
             {
                 throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reportedDiagnostics);
             }
-            TestCodeFix(document, expected, diagnostic.Descriptor, locator, codeFixIndex);
+            TestCodeFix(document, expected, diagnostic, locator, codeFixIndex);
         }
 
-        private void TestCodeFix(Document document, string expected, DiagnosticDescriptor descriptor, IDiagnosticLocator locator, int codeFixIndex = 0)
+        private void TestCodeFix(Document document, string expected, Diagnostic diagnostic, IDiagnosticLocator locator, int codeFixIndex = 0)
         {
-            var codeFixes = GetCodeFixes(document, locator, descriptor);
+            var codeFixes = GetCodeFixes(document, diagnostic);
             if (codeFixes.Length < codeFixIndex + 1)
             {
                 throw RoslynTestKitException.CodeFixNotFound(codeFixIndex, codeFixes, locator);
@@ -92,14 +95,12 @@ namespace RoslynTestKit
             return document.GetSemanticModelAsync().GetAwaiter().GetResult().GetDiagnostics();
         }
 
-        private ImmutableArray<CodeAction> GetCodeFixes(Document document, IDiagnosticLocator locator, DiagnosticDescriptor descriptor)
+        private ImmutableArray<CodeAction> GetCodeFixes(Document document, Diagnostic diagnostic)
         {
             var builder = ImmutableArray.CreateBuilder<CodeAction>();
-            var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
             var context = new CodeFixContext(document, diagnostic, (a, _) => builder.Add(a), CancellationToken.None);
             var provider = CreateProvider();
             provider.RegisterCodeFixesAsync(context).GetAwaiter().GetResult();
-
             return builder.ToImmutable();
         }
 
