@@ -137,6 +137,25 @@ class C
 ```
 Instead of the diagnostic descriptor, you can also use Diagnostic Id (error code) to identify the issue which should be fixed by tested code fix. This allows testing code fixes which respond to standard C# compiler errors such as `CS0736`.
 
+### Example: Test code fix that fixes issue reported by provided `DiagnosticAnalyzer`
+
+```csharp
+public class SampleTest : CodeFixTestFixture
+{
+    protected override string LanguageName => LanguageNames.CSharp;
+
+    protected override CodeFixProvider CreateProvider() => new SampleCodeFixProvider();
+
+    protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[] { new SampleCodeAnalyzer() };
+
+    [Test]
+    public void should_be_able_fix_issue_reported_by_analyzer()
+    {
+        TestCodeFix(/*Here comes code with issue */, /*Here comes fixed code*/, /*Diagnostic Id*/);
+    }
+}
+```
+
 #### Example: Test code refactoring behavior
 
 ```C#
@@ -209,7 +228,7 @@ class C
 }
 ```
 
-## Code comparision
+## Code comparison
 
 In case of discrepancy between the expected code and the generated one, when testing `CodeFixes` and `CodeRefactorings`, the `TransformedCodeDifferentThanExpectedException` is thrown. The Text difference is presented in the console using inline diff format, which looks as follows:
 
