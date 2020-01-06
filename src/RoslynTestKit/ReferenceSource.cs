@@ -10,9 +10,22 @@ namespace RoslynTestKit
     {
         internal static readonly MetadataReference Core = FromType<int>();
         internal static readonly MetadataReference Linq = FromType(typeof(Enumerable));
-        public static readonly MetadataReference NetStandardCore = 
-            MetadataReference.CreateFromFile(((String)AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES"))
-                .Split(Path.PathSeparator).FirstOrDefault(x=>x.EndsWith("mscorlib.dll")));
+        public static readonly MetadataReference NetStandardCore;
+
+        static ReferenceSource()
+        {
+            var trustedPlatformAssemblies = AppContext.GetData("TRUSTED_PLATFORM_ASSEMBLIES");
+            if (trustedPlatformAssemblies != null)
+            {
+                NetStandardCore = MetadataReference.CreateFromFile(((String)trustedPlatformAssemblies)
+                    ?.Split(Path.PathSeparator).FirstOrDefault(x => x.EndsWith("mscorlib.dll")));
+            }
+            else
+            {
+                NetStandardCore = null;
+            }
+
+        }
 
         public static MetadataReference FromType<T>() => FromType(typeof(T));
 
