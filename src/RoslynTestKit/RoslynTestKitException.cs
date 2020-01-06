@@ -37,8 +37,14 @@ namespace RoslynTestKit
 
         public static RoslynTestKitException CodeFixNotFound(int expectedCodeFixIndex, ImmutableArray<CodeAction> codeFixes, IDiagnosticLocator locator)
         {
-            var codeFixDescription = GetActionsDescription(codeFixes, " Found only {codeFixes.Length} CodeFixes: ");
+            var codeFixDescription = GetActionsDescription(codeFixes, $" Found only {codeFixes.Length} CodeFixes: ");
             var message = $"Cannot find CodeFix with index {expectedCodeFixIndex} at {locator.Description()}.{codeFixDescription}";
+            return new RoslynTestKitException(message);
+        }
+        public static RoslynTestKitException UnexpectedCodeFixFound(ImmutableArray<CodeAction> codeFixes, IDiagnosticLocator locator)
+        {
+            var codeFixDescription = GetActionsDescription(codeFixes, "Reported fixes: ");
+            var message = $"Found unexpected CodeFixes at {locator.Description()}.{codeFixDescription}";
             return new RoslynTestKitException(message);
         }
 
