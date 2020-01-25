@@ -47,6 +47,16 @@ namespace RoslynTestKit.Utils
 
             immutableReferencesBuilder.Add(ReferenceSource.Core);
             immutableReferencesBuilder.Add(ReferenceSource.Linq);
+            immutableReferencesBuilder.Add(ReferenceSource.LinqExpression);
+
+            if (ReferenceSource.Core.Display.EndsWith("mscorlib.dll") == false)
+            {
+                foreach (var netStandardCoreLib in ReferenceSource.NetStandardBasicLibs.Value)
+                {
+                    immutableReferencesBuilder.Add(netStandardCoreLib);
+                }
+            }
+
             return immutableReferencesBuilder.ToImmutable();
         }
 
