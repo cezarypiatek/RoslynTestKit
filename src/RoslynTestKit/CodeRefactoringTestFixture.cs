@@ -12,6 +12,8 @@ namespace RoslynTestKit
     {
         protected abstract CodeRefactoringProvider CreateProvider();
 
+        protected virtual bool FailWhenInputContainsErrors => true;
+
         protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex=0)
         {
             var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
@@ -44,6 +46,16 @@ namespace RoslynTestKit
             {
                 throw RoslynTestKitException.CodeRefactoringNotFound(refactoringIndex, codeRefactorings, locator);
             }
+
+            if (FailWhenInputContainsErrors)
+            {
+                var errors = document.GetErrors();
+                if (errors.Count > 0)
+                {
+                    throw RoslynTestKitException.UnexpectedErrorDiagnostic(errors);
+                }
+            }
+
             Verify.CodeAction(codeRefactorings[refactoringIndex], document, expected);
         }
 
