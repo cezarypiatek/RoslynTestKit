@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
+using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace RoslynTestKit.Utils
 {
@@ -18,11 +20,22 @@ namespace RoslynTestKit.Utils
         {
             var metadataReferences = CreateMetadataReferences(references);
 
+            var compilationOptions = GetCompilationOptions(languageName);
+
             return new AdhocWorkspace()
                 .AddProject(projectName ?? "TestProject", languageName)
+                .WithCompilationOptions(compilationOptions)
                 .AddMetadataReferences(metadataReferences)
                 .AddDocument(documentName ?? "TestDocument", code);
         }
+
+        private static CompilationOptions GetCompilationOptions(string languageName) =>
+            languageName switch
+            {
+                LanguageNames.CSharp => (CompilationOptions) new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                LanguageNames.VisualBasic => (CompilationOptions) new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                _ => throw new NotSupportedException($"Language {languageName} is not supported")
+            };
 
         private static ImmutableArray<MetadataReference> CreateMetadataReferences(IReadOnlyCollection<MetadataReference> references)
         {
