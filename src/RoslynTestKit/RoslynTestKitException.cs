@@ -21,6 +21,12 @@ namespace RoslynTestKit
             return new RoslynTestKitException($"Found reported diagnostic '{diagnosticId}' in spite of the expectations {description}");
         }
 
+        public static Exception UnexpectedErrorDiagnostic(IReadOnlyList<Diagnostic> errors)
+        {
+            var messages = errors.MergeWithNewLines(x=>x.ToString());
+            return new RoslynTestKitException($"Input document contains errors: \r\n {messages}");
+        }
+
         internal static Exception ExceptionInAnalyzer(
             Diagnostic diagnostic)
         {
@@ -41,6 +47,7 @@ namespace RoslynTestKit
             var message = $"Cannot find CodeFix with index {expectedCodeFixIndex} at {locator.Description()}.{codeFixDescription}";
             return new RoslynTestKitException(message);
         }
+
         public static RoslynTestKitException UnexpectedCodeFixFound(ImmutableArray<CodeAction> codeFixes, IDiagnosticLocator locator)
         {
             var codeFixDescription = GetActionsDescription(codeFixes, "Reported fixes: ");
