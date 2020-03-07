@@ -15,10 +15,15 @@ namespace RoslynTestKit
         {
         }
 
-        public static RoslynTestKitException UnexpectedDiagnostic(string diagnosticId, IDiagnosticLocator locator = null)
+        public static RoslynTestKitException UnexpectedDiagnostic(List<Diagnostic> unexpectedDiagnostics)
         {
-            var description = locator != null ? $"at {locator.Description()}" : string.Empty;
-            return new RoslynTestKitException($"Found reported diagnostic '{diagnosticId}' in spite of the expectations {description}");
+            var messages = unexpectedDiagnostics.Select(d =>
+            {
+                var position = d.Location.GetLineSpan().StartLinePosition;
+                return $"Found reported diagnostic '{d.Id}' in spite of the expectations at Line:{position.Line} Col:{position.Character}. Details: {d.GetMessage()}";
+            });
+            var description = string.Join("\r\n", messages);
+            return new RoslynTestKitException(description);
         }
 
         public static Exception UnexpectedErrorDiagnostic(IReadOnlyList<Diagnostic> errors)

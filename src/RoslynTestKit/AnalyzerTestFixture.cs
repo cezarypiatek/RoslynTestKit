@@ -43,10 +43,10 @@ namespace RoslynTestKit
             {
                 diagnostics = diagnostics.Where(x => locator.Match(x.Location)).ToImmutableArray();
             }
-            var hasDiagnostic = diagnostics.Any(d => d.Id == diagnosticId);
-            if (hasDiagnostic)
+            var unexpectedDiagnostics = diagnostics.Where(d => d.Id == diagnosticId).ToList();
+            if (unexpectedDiagnostics.Count > 0)
             {
-                throw RoslynTestKitException.UnexpectedDiagnostic(diagnosticId, locator);
+                throw RoslynTestKitException.UnexpectedDiagnostic(unexpectedDiagnostics);
             }
         }
 
