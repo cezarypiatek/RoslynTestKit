@@ -8,6 +8,8 @@ namespace RoslynTestKit
     {
         protected abstract string LanguageName { get; }
 
+        protected virtual bool ThrowsWhenInputDocumentContainsError { get; } = false;
+
         protected virtual IReadOnlyCollection<MetadataReference> References => null;
 
         protected Document CreateDocumentFromMarkup(string markup, string projectName = null, string documentName = null)
