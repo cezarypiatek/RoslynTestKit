@@ -93,11 +93,16 @@ namespace RoslynTestKit
             var compilation = document.Project.GetCompilationAsync(CancellationToken.None).Result;
             var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, cancellationToken: CancellationToken.None);
             var discarded = compilation.GetDiagnostics(CancellationToken.None);
+            var errorsInDocument = discarded.Where(x => x.Severity == DiagnosticSeverity.Error).ToArray();
+            if (errorsInDocument.Length > 0 && ThrowsWhenInputDocumentContainsError)
+            {
+                throw RoslynTestKitException.UnexpectedErrorDiagnostic(errorsInDocument);
+            }
 
-            var tree = document.GetSyntaxTreeAsync(CancellationToken.None).Result;
+            var tree = document.GetSyntaxTreeAsync(CancellationToken.None).GetAwaiter().GetResult();
 
             var builder = ImmutableArray.CreateBuilder<Diagnostic>();
-            foreach (var diagnostic in compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result)
+            foreach (var diagnostic in compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult())
             {
                 builder.Add(diagnostic);
             }

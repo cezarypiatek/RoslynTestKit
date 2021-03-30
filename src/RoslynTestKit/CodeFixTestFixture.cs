@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -17,6 +18,7 @@ namespace RoslynTestKit
 
         protected virtual IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => null;
 
+       
 
         protected void NoCodeFix(string markupCode, string diagnosticId)
         {
@@ -135,7 +137,19 @@ namespace RoslynTestKit
 
         private IEnumerable<Diagnostic> GetReportedDiagnostics(Document document, IDiagnosticLocator locator)
         {
-            return GetAllReportedDiagnostics(document).Where(d => locator.Match(d.Location));
+            var allReportedDiagnostics = GetAllReportedDiagnostics(document);
+            foreach (var diagnostic in allReportedDiagnostics)
+            {
+                if (locator.Match(diagnostic.Location))
+                {
+                    yield return diagnostic;
+                }
+                else if (ThrowsWhenInputDocumentContainsError && diagnostic.Severity == DiagnosticSeverity.Error)
+                {
+                    throw new InvalidOperationException($"Input document contains unexpected error: {diagnostic.GetMessage()}");
+                }
+            }
+            
         }
 
         private IEnumerable<Diagnostic> GetAllReportedDiagnostics(Document document)
@@ -145,7 +159,8 @@ namespace RoslynTestKit
             {
                 var documentTree = document.GetSyntaxTreeAsync().GetAwaiter().GetResult();
 
-                return document.Project.GetCompilationAsync().GetAwaiter().GetResult()
+                var compilation = document.Project.GetCompilationAsync().GetAwaiter().GetResult();
+                return compilation
                     .WithAnalyzers(additionalAnalyzers.ToImmutableArray())
                     .GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
                     .Where(x=>x.Location.SourceTree == documentTree);

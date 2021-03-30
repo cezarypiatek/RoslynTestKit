@@ -60,5 +60,7 @@ namespace RoslynTestKit
         public static MetadataReference FromAssembly(string assemblyLocation) => MetadataReference.CreateFromFile(assemblyLocation);
 
         public static MetadataReference FromType(Type type) => MetadataReference.CreateFromFile(type.Assembly.Location);
+
+        public static readonly MetadataReference NetStandard2_0 = MetadataReference.CreateFromFile(Assembly.Load("netstandard, Version=2.0.0.0").Location);
     }
 }
