@@ -16,15 +16,12 @@ namespace RoslynTestKit
                 throw RoslynTestKitException.NoOperationForCodeAction(codeAction);
             }
 
-            if (operations.Count>1)
-            {
-                throw RoslynTestKitException.MoreThanOneOperationForCodeAction(codeAction, operations);
-            }
-
-            var operation = operations.Single();
             var workspace = document.Project.Solution.Workspace;
-            operation.Apply(workspace, CancellationToken.None);
-
+            
+            foreach (var operation in operations)
+            {
+                operation.Apply(workspace, CancellationToken.None);
+            }
             var newDocument = workspace.CurrentSolution.GetDocument(document.Id);
 
             var sourceText = newDocument.GetTextAsync(CancellationToken.None).GetAwaiter().GetResult();
