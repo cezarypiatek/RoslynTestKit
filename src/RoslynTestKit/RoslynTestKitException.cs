@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Completion;
+using RoslynTestKit.CodeActionLocators;
 using RoslynTestKit.Utils;
 
 namespace RoslynTestKit
@@ -46,10 +47,10 @@ namespace RoslynTestKit
             return new RoslynTestKitException(message);
         }
 
-        public static RoslynTestKitException CodeFixNotFound(int expectedCodeFixIndex, ImmutableArray<CodeAction> codeFixes, IDiagnosticLocator locator)
+        public static RoslynTestKitException CodeFixNotFound(ICodeActionSelector codeActionSelector, ImmutableArray<CodeAction> codeFixes, IDiagnosticLocator locator)
         {
             var codeFixDescription = GetActionsDescription(codeFixes, $" Found only {codeFixes.Length} CodeFixes: ");
-            var message = $"Cannot find CodeFix with index {expectedCodeFixIndex} at {locator.Description()}.{codeFixDescription}";
+            var message = $"Cannot find CodeFix {codeActionSelector} at {locator.Description()}.{codeFixDescription}";
             return new RoslynTestKitException(message);
         }
 
@@ -60,10 +61,10 @@ namespace RoslynTestKit
             return new RoslynTestKitException(message);
         }
 
-        public static RoslynTestKitException CodeRefactoringNotFound(int expectedCodeRefactoringIndex, ImmutableArray<CodeAction> codeRefactorings, IDiagnosticLocator locator)
+        public static RoslynTestKitException CodeRefactoringNotFound(ICodeActionSelector codeActionSelector, ImmutableArray<CodeAction> codeRefactorings, IDiagnosticLocator locator)
         {
             var refactoringDescriptions = GetActionsDescription(codeRefactorings, $" Found only {codeRefactorings.Length} CodeRefactorings: ");
-            var message = $"Cannot find CodeRefactoring with index {expectedCodeRefactoringIndex}  at {locator.Description()}.{refactoringDescriptions}";
+            var message = $"Cannot find CodeRefactoring {codeActionSelector}  at {locator.Description()}.{refactoringDescriptions}";
             return new RoslynTestKitException(message);
         }
 

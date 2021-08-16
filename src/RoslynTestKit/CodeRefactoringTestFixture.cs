@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Text;
+using RoslynTestKit.CodeActionLocators;
 using RoslynTestKit.Utils;
 
 namespace RoslynTestKit
@@ -14,39 +15,40 @@ namespace RoslynTestKit
 
         protected virtual bool FailWhenInputContainsErrors => true;
 
-        protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex=0)
+        protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex = 0)
         {
             var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
             var locator = MarkupHelper.GetLocator(markupCode);
-            TestCodeRefactoring(document, expected, locator, refactoringIndex);
+            TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
+        }
+        
+        protected void TestCodeRefactoring(string markupCode, string expected, string title)
+        {
+            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
+            var locator = MarkupHelper.GetLocator(markupCode);
+            TestCodeRefactoring(document, expected, locator, new ByTitleCodeActionSelector(title));
         }
 
-        protected void TestCodeRefactoringAtLine(string code, string expected, int line, int refactoringIndex=0)
+        protected void TestCodeRefactoringAtLine(string code, string expected, int line, int refactoringIndex = 0)
         {
             var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
             var locator = LineLocator.FromCode(code, line);
-            TestCodeRefactoring(document, expected, locator, refactoringIndex);
+            TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
-        protected void TestCodeRefactoringAtLine(Document document, string expected, int line, int refactoringIndex=0)
+        protected void TestCodeRefactoringAtLine(Document document, string expected, int line, int refactoringIndex = 0)
         {
             var locator = LineLocator.FromDocument(document, line);
-            TestCodeRefactoring(document, expected, locator, refactoringIndex);
+            TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
 
         protected void TestCodeRefactoring(Document document, string expected, TextSpan span, int refactoringIndex = 0)
         {
             var locator = new TextSpanLocator(span);
-            TestCodeRefactoring(document, expected, locator, refactoringIndex);
+            TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
 
-        private void TestCodeRefactoring(Document document, string expected, IDiagnosticLocator locator, int refactoringIndex = 0)
+        private void TestCodeRefactoring(Document document, string expected, IDiagnosticLocator locator, ICodeActionSelector codeActionSelector)
         {
-            var codeRefactorings = GetCodeRefactorings(document, locator);
-            if (codeRefactorings.Length < refactoringIndex + 1)
-            {
-                throw RoslynTestKitException.CodeRefactoringNotFound(refactoringIndex, codeRefactorings, locator);
-            }
-
             if (FailWhenInputContainsErrors)
             {
                 var errors = document.GetErrors();
@@ -56,7 +58,15 @@ namespace RoslynTestKit
                 }
             }
 
-            Verify.CodeAction(codeRefactorings[refactoringIndex], document, expected);
+            var codeRefactorings = GetCodeRefactorings(document, locator);
+            var selectedRefactoring = codeActionSelector.Find(codeRefactorings);
+            
+            if (selectedRefactoring is null)
+            {
+                throw RoslynTestKitException.CodeRefactoringNotFound(codeActionSelector, codeRefactorings, locator);
+            }
+
+            Verify.CodeAction(selectedRefactoring, document, expected);
         }
 
         protected void TestNoCodeRefactoring(string markupCode)
