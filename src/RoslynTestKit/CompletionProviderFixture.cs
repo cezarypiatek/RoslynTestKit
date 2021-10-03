@@ -55,7 +55,7 @@ namespace RoslynTestKit
 
         private void VerifyExpectations(Document document, IDiagnosticLocator locator, CompletionTrigger? trigger, Action<ImmutableArray<CompletionItem>> assertion)
         {
-            var selectedTrigger = trigger ?? CompletionTrigger.Default;
+            var selectedTrigger = trigger ?? CompletionTrigger.Invoke;
             var provider = CreateProvider();
             var span = locator.GetSpan();
             var options = document.GetOptionsAsync(CancellationToken.None).GetAwaiter().GetResult();
