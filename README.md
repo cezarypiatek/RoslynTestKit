@@ -35,6 +35,18 @@ RoslynTestKit accepts strings that are marked up with ```[|``` and ```|]``` to i
 diagnostic or the text selection before a refactoring is applied. 
 Instead of the markers you can also provide line number to locate the place of expected diagnostic.
 
+### Framework dependencies
+
+By default RoslynTestKit adds to the compilation the following references:
+- `mscorlib.dll` (and its dependencies)
+- `System.Private.CoreLib.dll`
+- `System.Linq.dll`
+- `System.Linq.Expression.dll`
+
+You can change that behavior by overriding `CreateFrameworkMetadataReferences()` method. You can also take full control of how the workspace/compilation is created by overriding :
+
+```Document CreateDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> extraReferences)```
+
 ### External dependencies
 
 Every `*TestFixture` has a `References` property which allows providing external dependencies required by the test case code/markup. There is also a couple of helper methods in `ReferenceSource` class that allow to easily define these dependencies. A sample setup for analyzer test with external dependencies can looks as follows:
