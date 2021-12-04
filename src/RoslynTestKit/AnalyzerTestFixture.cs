@@ -14,7 +14,7 @@ namespace RoslynTestKit
 
         protected void NoException(string code)
         {
-            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var document = CreateDocumentFromCode(code);
             var diagnostics = GetDiagnostics(document);
             var diagnostic = diagnostics.FirstOrDefault(d => d.Id == "AD0001");
             if (diagnostic != null)
@@ -25,13 +25,13 @@ namespace RoslynTestKit
 
         protected void NoDiagnostic(string code, string diagnosticId)
         {
-            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var document = CreateDocumentFromCode(code);
             NoDiagnostic(document, diagnosticId);
         }
 
         protected void NoDiagnosticAtLine(string code, string diagnosticId, int lineNumber)
         {
-            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, lineNumber);
             NoDiagnostic(document, diagnosticId, locator);
         }
@@ -52,14 +52,14 @@ namespace RoslynTestKit
 
         protected void HasDiagnostic(string markupCode, string diagnosticId)
         {
-            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
-            var locator = MarkupHelper.GetLocator(markupCode);
-            HasDiagnostic(document, diagnosticId, locator);
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            HasDiagnostic(document, diagnosticId, markup.Locator);
         }
 
         protected void HasDiagnosticAtLine(string code, string diagnosticId, int lineNumber)
         {
-            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, lineNumber);
             HasDiagnostic(document, diagnosticId, locator);
         }

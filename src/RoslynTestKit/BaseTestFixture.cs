@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using RoslynTestKit.Utils;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace RoslynTestKit
 {
@@ -12,18 +14,50 @@ namespace RoslynTestKit
 
         protected virtual IReadOnlyCollection<MetadataReference> References => null;
 
-        protected Document CreateDocumentFromMarkup(string markup, string projectName = null, string documentName = null)
+
+        protected Document CreateDocumentFromCode(string code)
         {
-            return MarkupHelper.GetDocumentFromMarkup(markup, LanguageName, References, projectName, documentName);
-        }
-        protected Document CreateDocumentFromCode(string code, string projectName = null, string documentName = null)
-        {
-            return MarkupHelper.GetDocumentFromCode(code, LanguageName, References, projectName, documentName);
+            return CreateDocumentFromCode(code, LanguageName, References ?? Array.Empty<MetadataReference>());
         }
 
-        protected IDiagnosticLocator GetMarkerLocation(string markupCode)
+        /// <summary>
+        ///     Should create the compilation and return a document that represents the provided code
+        /// </summary>
+        protected virtual Document CreateDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> extraReferences)
         {
-            return MarkupHelper.GetLocator(markupCode);
+            var frameworkReferences = CreateFrameworkMetadataReferences();
+
+            var compilationOptions = GetCompilationOptions(languageName);
+
+            return new AdhocWorkspace()
+                .AddProject("TestProject", languageName)
+                .WithCompilationOptions(compilationOptions)
+                .AddMetadataReferences(frameworkReferences)
+                .AddMetadataReferences(extraReferences)
+                .AddDocument("TestDocument", code);
+        }
+
+        private static CompilationOptions GetCompilationOptions(string languageName) =>
+            languageName switch
+            {
+                LanguageNames.CSharp => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                LanguageNames.VisualBasic => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                _ => throw new NotSupportedException($"Language {languageName} is not supported")
+            };
+
+        protected virtual IEnumerable<MetadataReference> CreateFrameworkMetadataReferences()
+        {
+            yield return ReferenceSource.Core;
+            yield return ReferenceSource.Linq;
+            yield return ReferenceSource.LinqExpression;
+
+            if (ReferenceSource.Core.Display.EndsWith("mscorlib.dll") == false)
+            {
+                foreach (var netStandardCoreLib in ReferenceSource.NetStandardBasicLibs.Value)
+                {
+                    yield return netStandardCoreLib;
+                }
+            }
         }
     }
 }

@@ -17,21 +17,21 @@ namespace RoslynTestKit
 
         protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex = 0)
         {
-            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
-            var locator = MarkupHelper.GetLocator(markupCode);
-            TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            TestCodeRefactoring(document, expected, markup.Locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
         
         protected void TestCodeRefactoring(string markupCode, string expected, string title)
         {
-            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
-            var locator = MarkupHelper.GetLocator(markupCode);
-            TestCodeRefactoring(document, expected, locator, new ByTitleCodeActionSelector(title));
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            TestCodeRefactoring(document, expected, markup.Locator, new ByTitleCodeActionSelector(title));
         }
 
         protected void TestCodeRefactoringAtLine(string code, string expected, int line, int refactoringIndex = 0)
         {
-            var document = MarkupHelper.GetDocumentFromCode(code, LanguageName, References);
+            var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, line);
             TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
@@ -71,9 +71,9 @@ namespace RoslynTestKit
 
         protected void TestNoCodeRefactoring(string markupCode)
         {
-            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
-            var locator = MarkupHelper.GetLocator(markupCode);
-            TestNoCodeRefactoring(document, locator);
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            TestNoCodeRefactoring(document, markup.Locator);
         }
 
         protected void TestNoCodeRefactoring(Document document, TextSpan span)

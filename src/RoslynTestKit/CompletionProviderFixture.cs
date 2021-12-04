@@ -13,17 +13,17 @@ namespace RoslynTestKit
     {
         protected void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger=null)
         {
-            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
-            var locator = MarkupHelper.GetLocator(markupCode);
-            var assertion = CreateAssertionBasedOnExpectedSet(expectedCompletions, locator);
-            VerifyExpectations(document, locator, trigger, assertion);
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            var assertion = CreateAssertionBasedOnExpectedSet(expectedCompletions, markup.Locator);
+            VerifyExpectations(document, markup.Locator, trigger, assertion);
         }
 
         protected void TestCompletion(string markupCode, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger=null)
         {
-            var document = MarkupHelper.GetDocumentFromMarkup(markupCode, LanguageName, References);
-            var locator = MarkupHelper.GetLocator(markupCode);
-            VerifyExpectations(document, locator, trigger, assertion);
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            VerifyExpectations(document, markup.Locator, trigger, assertion);
         }
 
         protected void TestCompletion(Document document, TextSpan span, string[] expectedCompletions, CompletionTrigger? trigger = null)
