@@ -45,19 +45,6 @@ namespace RoslynTestKit
                 _ => throw new NotSupportedException($"Language {languageName} is not supported")
             };
 
-        protected virtual IEnumerable<MetadataReference> CreateFrameworkMetadataReferences()
-        {
-            yield return ReferenceSource.Core;
-            yield return ReferenceSource.Linq;
-            yield return ReferenceSource.LinqExpression;
-
-            if (ReferenceSource.Core.Display.EndsWith("mscorlib.dll") == false)
-            {
-                foreach (var netStandardCoreLib in ReferenceSource.NetStandardBasicLibs.Value)
-                {
-                    yield return netStandardCoreLib;
-                }
-            }
-        }
+        protected virtual MetadataReference[] CreateFrameworkMetadataReferences() => ReferenceSource.References;
     }
 }

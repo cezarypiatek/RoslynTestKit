@@ -2,7 +2,7 @@
 
 namespace RoslynTestKit
 {
-    public class TransformedCodeDifferentThanExpectedException: RoslynTestKitException
+    public class TransformedCodeDifferentThanExpectedException : RoslynTestKitException
     {
         public string Diff { get; }
         public string TransformedCode { get; }

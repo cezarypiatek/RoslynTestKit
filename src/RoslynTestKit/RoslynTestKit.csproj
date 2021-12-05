@@ -23,11 +23,12 @@
   <ItemGroup>
     <PackageReference Include="ApprovalTests" Version="5.7.1" />
     <PackageReference Include="DiffPlex" Version="1.7.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.1.0-1.21502.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.1.0-1.21502.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.1.0-1.21502.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.1.0-1.21502.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.1.0-1.21502.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
 

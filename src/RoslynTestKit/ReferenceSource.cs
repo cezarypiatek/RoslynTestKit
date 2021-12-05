@@ -8,7 +8,7 @@ namespace RoslynTestKit
 {
     public static class ReferenceSource
     {
-        internal static readonly MetadataReference[] References;
+        internal static MetadataReference[] References { get; }
 
         static ReferenceSource()
         {
