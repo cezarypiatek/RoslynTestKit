@@ -35,6 +35,13 @@ namespace RoslynTestKit
             var locator = LineLocator.FromCode(code, lineNumber);
             NoDiagnostic(document, diagnosticId, locator);
         }
+        
+        protected void NoDiagnosticAtMarker(string markup, string diagnosticId)
+        {
+            var codeMarkup = new CodeMarkup(markup);
+            var document = CreateDocumentFromCode(codeMarkup.Code);
+            NoDiagnostic(document, diagnosticId, codeMarkup.Locator);
+        }
 
         protected void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator = null)
         {
