@@ -6,11 +6,11 @@ namespace RoslynTestKit.Utils
 {
     internal static class StringHelpers
     {
-        public static string MergeWithComma<T>(this IReadOnlyList<T> list, Func<T, string> map=null, string title=null)
+        public static string MergeWithComma<T>(this IReadOnlyList<T> list, Func<T, string> map = null, string title = null)
         {
             return MergeWith(list, map, title, ", ");
         }
-        public static string MergeWithNewLines<T>(this IReadOnlyList<T> list, Func<T, string> map=null, string title=null)
+        public static string MergeWithNewLines<T>(this IReadOnlyList<T> list, Func<T, string> map = null, string title = null)
         {
             return MergeWith(list, map, title, Environment.NewLine);
         }
@@ -25,7 +25,7 @@ namespace RoslynTestKit.Utils
             return title + string.Join(separator, list.Select(map ?? (x => x.ToString())));
         }
 
-        public static string MergeAsBulletList<T>(this IReadOnlyList<T> list, Func<T, string> map=null, string title = null)
+        public static string MergeAsBulletList<T>(this IReadOnlyList<T> list, Func<T, string> map = null, string title = null)
         {
             if (list.Count == 0)
             {

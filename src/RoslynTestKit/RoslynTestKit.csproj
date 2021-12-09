@@ -3,17 +3,14 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>Dustin Campbell, Ivan Yochev, Cezary Piątek</Authors>
-    <Title>RoslynTestKit</Title>
-    <Description>A lightweight framework for creating unit tests for Roslyn diagnostic analyzers, code fixes and refactorings. This is a of fork Dustin Campbell's library RoslynNUnitLight - this version is a test framework independent.</Description>
-    <Copyright>Copyright 2015-2019 by Dustin Campbell, Ivan Yochev, Cezary Piątek</Copyright>
-    <PackageLicenseUrl>https://github.com/cezarypiatek/RoslynTestKit/blob/master/License.txt</PackageLicenseUrl>
+    <Copyright>Copyright 2015-2021 by Dustin Campbell, Ivan Yochev, Cezary Piątek</Copyright>
     <PackageProjectUrl>https://github.com/cezarypiatek/RoslynTestKit</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cezarypiatek/RoslynTestKit</RepositoryUrl>
-    <PackageIconUrl>https://github.com/cezarypiatek/RoslynTestKit/raw/master/doc/logo.jpg</PackageIconUrl>
+    <Title>RoslynTestKit</Title>
+    <Description>A lightweight framework for creating unit tests for Roslyn diagnostic analyzers, code fixes and refactorings. This is a of fork Dustin Campbell's library RoslynNUnitLight - this version is a test framework independent.</Description>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIconUrl>icon.png</PackageIconUrl>
     <PackageTags>Roslyn CodeAnalysis test testing tdd analyzer fixes refactor refactoring</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Language>en-US</Language>
@@ -21,16 +18,30 @@
     <PackageId>SmartAnalyzers.RoslynTestKit</PackageId>
     <Product>RoslynTestKit</Product>
     <LangVersion>8.0</LangVersion>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <DebugType>portable</DebugType>
   </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="ApprovalTests" Version="4.2.0" />
-    <PackageReference Include="DiffPlex" Version="1.5.0" />
+    <PackageReference Include="ApprovalTests" Version="5.7.1" />
+    <PackageReference Include="DiffPlex" Version="1.7.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.0.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.0.1" />
-     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="6.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <Visible>False</Visible>
+    </None>
+    <None Include="..\..\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+      <Visible>False</Visible>
+    </None>
   </ItemGroup>
 </Project>

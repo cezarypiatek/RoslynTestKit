@@ -4,7 +4,7 @@ using RoslynTestKit.Utils;
 
 namespace RoslynTestKit
 {
-    class CodeMarkup
+    internal class CodeMarkup
     {
         public CodeMarkup(string markup)
         {

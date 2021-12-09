@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 
 namespace RoslynTestKit.Utils
 {
-    static class DocumentExtensions
+    internal static class DocumentExtensions
     {
         public static IReadOnlyList<Diagnostic> GetErrors(this Document document)
         {
