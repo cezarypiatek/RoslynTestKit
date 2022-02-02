@@ -15,6 +15,13 @@ namespace RoslynTestKit
 
         protected virtual bool FailWhenInputContainsErrors => true;
 
+        protected void TestCodeRefactoring(string markupCode, string expected,  ICodeActionSelector actionSelector)
+        {
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            TestCodeRefactoring(document, expected, markup.Locator, actionSelector);
+        }
+
         protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex = 0)
         {
             var markup = new CodeMarkup(markupCode);
