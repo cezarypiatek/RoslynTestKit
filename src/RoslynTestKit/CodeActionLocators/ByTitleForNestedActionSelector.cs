@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Reflection;
 using Microsoft.CodeAnalysis.CodeActions;
 
 namespace RoslynTestKit.CodeActionLocators
@@ -21,17 +19,14 @@ namespace RoslynTestKit.CodeActionLocators
 
         public CodeAction Find(IReadOnlyList<CodeAction> actions)
         {
-            if (groupSelector.Find(actions) is { } group && group.GetType() is {Name: "CodeActionWithNestedActions"} groupType)
+            if (groupSelector.Find(actions) is { } group && NestedCodeActionHelper.TryGetNestedAction(group) is {} nestedActions)
             {
-                var nestedCodeActionObj = groupType.GetProperty("NestedCodeActions", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)?.GetValue(group);
-                if (nestedCodeActionObj != null)
-                {
-                    var nestedActions = (ImmutableArray<CodeAction>) nestedCodeActionObj;
-                    return nestedActionSelector.Find(nestedActions);
-                }
+                return nestedActionSelector.Find(nestedActions);
             }
 
             return null;
         }
+
+        public override string ToString() => $"with nested action [{groupSelector}] -> [{nestedActionSelector}]";
     }
 }

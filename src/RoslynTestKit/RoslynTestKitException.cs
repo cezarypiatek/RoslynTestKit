@@ -81,7 +81,15 @@ namespace RoslynTestKit
                 return string.Empty;
             }
 
-            return title + string.Join(", ", codeFixes.Select((x, index) => $"[{index}] = {x.Title}"));
+            return title + Environment.NewLine + string.Join(Environment.NewLine, codeFixes.SelectMany((x, index) =>
+            {
+                if (NestedCodeActionHelper.TryGetNestedAction(x) is { } nestedAction)
+                {
+                    return nestedAction.Select(n => $"[{index}] = {x.Title} -> {n.Title}").ToArray();
+                }
+
+                return new[] {$"[{index}] = {x.Title}"};
+            })) + Environment.NewLine;
         }
 
         public static RoslynTestKitException NoOperationForCodeAction(CodeAction codeAction)

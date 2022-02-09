@@ -21,7 +21,7 @@ namespace RoslynTestKit.CodeActionLocators
 
         public override string ToString()
         {
-            return $"with title {_title}";
+            return $"with title '{_title}'";
         }
     }
 }
