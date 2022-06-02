@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.VisualBasic;
@@ -20,6 +22,10 @@ namespace RoslynTestKit
             return CreateDocumentFromCode(code, LanguageName, References ?? Array.Empty<MetadataReference>());
         }
 
+        internal const string FileSeparator = "/*EOD*/";
+        private readonly static Regex FileSeparatorPattern = new Regex(Regex.Escape(FileSeparator));
+
+
         /// <summary>
         ///     Should create the compilation and return a document that represents the provided code
         /// </summary>
@@ -29,12 +35,23 @@ namespace RoslynTestKit
 
             var compilationOptions = GetCompilationOptions(languageName);
 
-            return new AdhocWorkspace()
+            var docs = FileSeparatorPattern.Split(code).Reverse().ToList();
+
+            var project = new AdhocWorkspace()
                 .AddProject("TestProject", languageName)
                 .WithCompilationOptions(compilationOptions)
                 .AddMetadataReferences(frameworkReferences)
-                .AddMetadataReferences(extraReferences)
-                .AddDocument("TestDocument", code);
+                .AddMetadataReferences(extraReferences);
+           
+            Document mainDocument = null;
+            foreach (var doc in docs.Select((e, i) => (e, i)))
+            {
+                var docContent = docs.Count > 1 ? doc.e.Trim() : doc.e;
+                mainDocument = project.AddDocument($"TestDocument{doc.i}", docContent);
+                project = mainDocument.Project;
+            }
+
+            return mainDocument;
         }
 
         private static CompilationOptions GetCompilationOptions(string languageName) =>

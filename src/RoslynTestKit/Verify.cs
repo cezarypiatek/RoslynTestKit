@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -24,8 +26,26 @@ namespace RoslynTestKit
             }
             var newDocument = workspace.CurrentSolution.GetDocument(document.Id);
 
+            if (newDocument == null)
+            {
+                throw new InvalidOperationException("Resulting solution does not have the original document");
+            }
+
             var sourceText = newDocument.GetTextAsync(CancellationToken.None).GetAwaiter().GetResult();
-            var actualCode = sourceText.ToString();
+            var mergedDocumentBuilder = new StringBuilder();
+            mergedDocumentBuilder.Append(sourceText.ToString());
+           
+
+            foreach (var doc in newDocument.Project.Documents.OrderByDescending(x=>x.Name))
+            {
+                if (doc.Id != document.Id)
+                {
+                    mergedDocumentBuilder.AppendLine($"\r\n{BaseTestFixture.FileSeparator}");
+                    mergedDocumentBuilder.Append(doc.GetTextAsync(CancellationToken.None).GetAwaiter().GetResult().ToString());
+                }
+            }
+            var actualCode = mergedDocumentBuilder.ToString();
+
             if (actualCode != expectedCode)
             {
                 DiffHelper.TryToReportDiffWithExternalTool(expectedCode, actualCode);
