@@ -28,6 +28,12 @@ namespace RoslynTestKit
             var document = CreateDocumentFromCode(code);
             NoDiagnostic(document, diagnosticId);
         }
+        
+        protected void NoDiagnostic(string code, string[] diagnosticIds)
+        {
+            var document = CreateDocumentFromCode(code);
+            NoDiagnostic(document, diagnosticIds);
+        }
 
         protected void NoDiagnosticAtLine(string code, string diagnosticId, int lineNumber)
         {
@@ -45,12 +51,17 @@ namespace RoslynTestKit
 
         protected void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator = null)
         {
+            NoDiagnostic(document, new []{diagnosticId}, locator);
+        }
+        
+        protected void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator locator = null)
+        {
             var diagnostics = GetDiagnostics(document);
             if (locator != null)
             {
                 diagnostics = diagnostics.Where(x => locator.Match(x.Location)).ToImmutableArray();
             }
-            var unexpectedDiagnostics = diagnostics.Where(d => d.Id == diagnosticId).ToList();
+            var unexpectedDiagnostics = diagnostics.Where(d => diagnosticIds.Contains(d.Id)).ToList();
             if (unexpectedDiagnostics.Count > 0)
             {
                 throw RoslynTestKitException.UnexpectedDiagnostic(unexpectedDiagnostics);
