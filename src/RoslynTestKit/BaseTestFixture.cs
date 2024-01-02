@@ -16,6 +16,7 @@ namespace RoslynTestKit
 
         protected virtual IReadOnlyCollection<MetadataReference> References => null;
 
+        protected virtual IReadOnlyCollection<AdditionalText> AdditionalFiles => null;
 
         protected Document CreateDocumentFromCode(string code)
         {

@@ -15,40 +15,40 @@ namespace RoslynTestKit
 
         protected virtual bool FailWhenInputContainsErrors => true;
 
-        protected void TestCodeRefactoring(string markupCode, string expected,  ICodeActionSelector actionSelector)
+        public void TestCodeRefactoring(string markupCode, string expected,  ICodeActionSelector actionSelector)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
             TestCodeRefactoring(document, expected, markup.Locator, actionSelector);
         }
 
-        protected void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex = 0)
+        public void TestCodeRefactoring(string markupCode, string expected, int refactoringIndex = 0)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
             TestCodeRefactoring(document, expected, markup.Locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
         
-        protected void TestCodeRefactoring(string markupCode, string expected, string title)
+        public void TestCodeRefactoring(string markupCode, string expected, string title)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
             TestCodeRefactoring(document, expected, markup.Locator, new ByTitleCodeActionSelector(title));
         }
 
-        protected void TestCodeRefactoringAtLine(string code, string expected, int line, int refactoringIndex = 0)
+        public void TestCodeRefactoringAtLine(string code, string expected, int line, int refactoringIndex = 0)
         {
             var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, line);
             TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
-        protected void TestCodeRefactoringAtLine(Document document, string expected, int line, int refactoringIndex = 0)
+        public void TestCodeRefactoringAtLine(Document document, string expected, int line, int refactoringIndex = 0)
         {
             var locator = LineLocator.FromDocument(document, line);
             TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
 
-        protected void TestCodeRefactoring(Document document, string expected, TextSpan span, int refactoringIndex = 0)
+        public void TestCodeRefactoring(Document document, string expected, TextSpan span, int refactoringIndex = 0)
         {
             var locator = new TextSpanLocator(span);
             TestCodeRefactoring(document, expected, locator, new ByIndexCodeActionSelector(refactoringIndex));
