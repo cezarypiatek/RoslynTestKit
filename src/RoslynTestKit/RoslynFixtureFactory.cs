@@ -15,21 +15,21 @@ namespace RoslynTestKit
         }
 
         public static AnalyzerTestFixture Create<T>(T diagnosticAnalyzer, AnalyzerTestFixtureConfig? config = null) 
-            where T : DiagnosticAnalyzer, new()
+            where T : DiagnosticAnalyzer
         {
          
             return new ConfigurableAnalyzerTestFixture(diagnosticAnalyzer, config ?? new AnalyzerTestFixtureConfig());
         }
         
-        public static CodeFixTestFixture Create<T>(CodeFixTestFixtureConfig config = null) 
+        public static CodeFixTestFixture Create<T>(CodeFixTestFixtureConfig? config = null) 
             where T : CodeFixProvider, new()
         {
             var codeFixProvider = new T();
             return Create(codeFixProvider, config);
         }
 
-        private static CodeFixTestFixture Create<T>(T codeFixProvider, CodeFixTestFixtureConfig config = null) 
-            where T : CodeFixProvider, new()
+        private static CodeFixTestFixture Create<T>(T codeFixProvider, CodeFixTestFixtureConfig? config = null) 
+            where T : CodeFixProvider
         {
             return new ConfigurableCodeFixTestFixture(codeFixProvider, config ?? new CodeFixTestFixtureConfig());
         }
@@ -42,7 +42,7 @@ namespace RoslynTestKit
         }
 
         private static CodeRefactoringTestFixture Create<T>(T codeRefactoringProvider, CodeRefactoringTestFixtureConfig? config = null) 
-            where T : CodeRefactoringProvider, new()
+            where T : CodeRefactoringProvider
         {
             return new ConfigurableCodeRefactoringTestFixture(codeRefactoringProvider, config ?? new CodeRefactoringTestFixtureConfig());
         }
@@ -56,7 +56,7 @@ namespace RoslynTestKit
         }
 
         private static ConfigurableCompletionProviderTestFixture Create<T>(T completionProvider, CompletionProviderTestFixtureConfig? config = null) 
-            where T : CompletionProvider, new()
+            where T : CompletionProvider
         {
             return new ConfigurableCompletionProviderTestFixture(completionProvider, config ??  new CompletionProviderTestFixtureConfig());
         }
