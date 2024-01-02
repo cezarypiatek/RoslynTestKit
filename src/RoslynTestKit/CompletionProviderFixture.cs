@@ -11,7 +11,7 @@ namespace RoslynTestKit
 {
     public abstract class CompletionProviderFixture : BaseTestFixture
     {
-        protected void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger=null)
+        public void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger=null)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
@@ -19,21 +19,21 @@ namespace RoslynTestKit
             VerifyExpectations(document, markup.Locator, trigger, assertion);
         }
 
-        protected void TestCompletion(string markupCode, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger=null)
+        public void TestCompletion(string markupCode, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger=null)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
             VerifyExpectations(document, markup.Locator, trigger, assertion);
         }
 
-        protected void TestCompletion(Document document, TextSpan span, string[] expectedCompletions, CompletionTrigger? trigger = null)
+        public void TestCompletion(Document document, TextSpan span, string[] expectedCompletions, CompletionTrigger? trigger = null)
         {
             var locator = new TextSpanLocator(span);
             var assertion = CreateAssertionBasedOnExpectedSet(expectedCompletions, locator);
             VerifyExpectations(document, locator, trigger, assertion);
         }
 
-        protected void TestCompletion(Document document, TextSpan span, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger = null)
+        public void TestCompletion(Document document, TextSpan span, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger = null)
         {
             var locator = new TextSpanLocator(span);
             VerifyExpectations(document, locator, trigger, assertion);

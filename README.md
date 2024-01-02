@@ -11,25 +11,10 @@ This is a port of [RoslynNUnitLight.NetStandard](https://github.com/phoenix172/R
 
 1. Install the [SmartAnalyzers.RoslynTestKit ](https://www.nuget.org/packages/SmartAnalyzers.RoslynTestKit/)
    package from NuGet into your project.
-2. Create a new class that inherits from one of the provided ```*TestFixture```
-   classes that matches what are going to test.
+2. Create appropriate test fixture using `RoslynFixtureFactory`
+3. Fix the fixture to perform assertion!
 
-   * [```DiagnosticAnalyzer```](http://source.roslyn.io/#Microsoft.CodeAnalysis/DiagnosticAnalyzer/DiagnosticAnalyzer.cs) = ```AnalyzerTestFixture``` 
-   * [```CodeFixProvider```](http://source.roslyn.io/#Microsoft.CodeAnalysis.Workspaces/CodeFixes/CodeFixProvider.cs) = ```CodeFixTestFixture```
-   * [```CodeRefactoringProvider```](http://source.roslyn.io/#Microsoft.CodeAnalysis.Workspaces/CodeRefactorings/CodeRefactoringProvider.cs) = ```CodeRefactoringTestFixture``` 
-   * [```CompletionProvider```](http://source.roslyn.io/#Microsoft.CodeAnalysis.Features/Completion/CompletionProvider.cs) = ```CompletionProviderFixture``` 
-
-3. Override the ```LanguageName``` property and return the appropriate value
-   from [```Microsoft.CodeAnalysis.LanguageNames```](http://source.roslyn.io/#Microsoft.CodeAnalysis/Symbols/LanguageNames.cs),
-   depending on what language your tests will target.
-4. Override the ```CreateAnalyzer``` or ```CreateProvider``` method and return
-   an instance of your analyzer or provider.
-
-5. Override the `References` property if you want to provide external dependencies for parsed code.
-
-6. Write tests!
-
-### Writing Unit Tests
+### Code location markers
 
 RoslynTestKit accepts strings that are marked up with ```[|``` and ```|]``` to identify a particular span. This could represent the span of an expected
 diagnostic or the text selection before a refactoring is applied. 
@@ -49,19 +34,23 @@ You can change that behavior by overriding `CreateFrameworkMetadataReferences()`
 
 ### External dependencies
 
-Every `*TestFixture` has a `References` property which allows providing external dependencies required by the test case code/markup. There is also a couple of helper methods in `ReferenceSource` class that allow to easily define these dependencies. A sample setup for analyzer test with external dependencies can looks as follows:
+Every `*TestFixture` can be configured to import external dependencies required by the test case code/markup. There is also a couple of helper methods in `ReferenceSource` class that allow to easily define these dependencies. A sample setup for analyzer test with external dependencies can looks as follows:
 
 ```csharp
-public class SampleAnalyzerTest : AnalyzerTestFixture
+public class SampleTests
 {
-    protected override string LanguageName => LanguageNames.CSharp;
-    
-    protected override DiagnosticAnalyzer CreateAnalyzer() => new SampleAnalyzer();
-    
-    protected override IReadOnlyCollection<MetadataReference> References => new[]
+
+    [Test]
+    public void should_verify_analyzer()
     {
-        ReferenceSource.FromType<ReaderWriterLock>()        
-    };
+        var fixture = RoslynFixtureFactory.Create<SampleAnalyzer>(new () {
+            References = new []{
+                ReferenceSource.FromType<ReaderWriterLock>() 
+            };
+        });
+
+        //TODO: test your analyzer
+    }
 }
 ```
 
@@ -81,7 +70,9 @@ class C
 	}
 }";
 
-    HasDiagnostic(code, DiagnosticIds.UseGetterOnlyAutoProperty);
+    var fixture = RoslynFixtureFactory.Create<UseGetterOnlyAutoPropertyAnalyzer>();
+
+    fixture.HasDiagnostic(code, DiagnosticIds.UseGetterOnlyAutoProperty);
 }
 ```
 
@@ -100,9 +91,12 @@ class C
 		MyProperty = f;
 	}
 }";
+
+    var fixture = RoslynFixtureFactory.Create<UseGetterOnlyAutoPropertyAnalyzer>();
+
     var document = this.CreateDocumentFromMarkup(markup, "MySampleProject", "MySampleDocument");
     var diagnosticLocation = this.GetMarkerLocation(markup);
-    HasDiagnostic(document, DiagnosticIds.UseGetterOnlyAutoProperty, diagnosticLocation);
+    fixture.HasDiagnostic(document, DiagnosticIds.UseGetterOnlyAutoProperty, diagnosticLocation);
 }
 ```
 
@@ -122,7 +116,8 @@ class C
     }
 }";
 
-    NoDiagnostic(code, DiagnosticIds.UseGetterOnlyAutoProperty);
+    var fixture = RoslynFixtureFactory.Create<UseGetterOnlyAutoPropertyAnalyzer>();
+    fixture.NoDiagnostic(code, DiagnosticIds.UseGetterOnlyAutoProperty);
 }
 ```
 
@@ -144,7 +139,8 @@ class C
     public bool P1 { get; }
 }";
 
-    TestCodeFix(markupCode, expected, DiagnosticDescriptors.UseGetterOnlyAutoProperty);
+    var fixture = RoslynFixtureFactory.Create<UseGetterOnlyAutoPropertyCodeFix>();
+    fixture.TestCodeFix(markupCode, expected, DiagnosticDescriptors.UseGetterOnlyAutoProperty);
 }
 ```
 Instead of the diagnostic descriptor, you can also use Diagnostic Id (error code) to identify the issue which should be fixed by tested code fix. This allows testing code fixes which respond to standard C# compiler errors such as `CS0736`.
@@ -152,18 +148,21 @@ Instead of the diagnostic descriptor, you can also use Diagnostic Id (error code
 ### Example: Test code fix that fixes issue reported by provided `DiagnosticAnalyzer`
 
 ```csharp
-public class SampleTest : CodeFixTestFixture
-{
-    protected override string LanguageName => LanguageNames.CSharp;
-
-    protected override CodeFixProvider CreateProvider() => new SampleCodeFixProvider();
-
-    protected override IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => new[] { new SampleCodeAnalyzer() };
+public class SampleTest
+{   
 
     [Test]
     public void should_be_able_fix_issue_reported_by_analyzer()
     {
-        TestCodeFix(/*Here comes code with issue */, /*Here comes fixed code*/, /*Diagnostic Id*/);
+
+        var fixture = RoslynFixtureFactory.Create<UseGetterOnlyAutoPropertyCodeFix>(new ()
+        {
+            AdditionalAnalyzers = new [] {
+                new[] { new UseGetterOnlyAutoPropertyAnalyzer()
+            }
+        });
+
+        fixture.TestCodeFix(/*Here comes code with issue */, /*Here comes fixed code*/, /*Diagnostic Id*/);
     }
 }
 ```
@@ -192,7 +191,8 @@ class C
     }
 }";
 
-    TestCodeRefactoring(markupCode, expected);
+    var fixture = RoslynFixtureFactory.Create<SampleCodeRefactoringProvider>();
+    fixture.TestCodeRefactoring(markupCode, expected);
 }
 ```
 
@@ -211,7 +211,9 @@ class C
     }
 }";
 
-    TestCompletion(markupCode, new []
+    var fixture = RoslynFixtureFactory.Create<SampleCompletionProvider>();
+
+    fixture.TestCompletion(markupCode, new []
     {
         "first expected suggestion",
         "second expected suggestion"
@@ -233,7 +235,9 @@ class C
     }
 }";
 
-    TestCompletion(markupCode, (ImmutableArray<CompletionItem> suggestions) =>
+    var fixture = RoslynFixtureFactory.Create<SampleCompletionProvider>();
+
+    fixture.TestCompletion(markupCode, (ImmutableArray<CompletionItem> suggestions) =>
     {
         //TODO: Custom assertions
     });

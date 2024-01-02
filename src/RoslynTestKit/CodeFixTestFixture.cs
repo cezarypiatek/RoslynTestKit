@@ -18,29 +18,29 @@ namespace RoslynTestKit
         protected abstract CodeFixProvider CreateProvider();
 
         protected virtual IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => null;
-        
-        protected void NoCodeFix(string markupCode, string diagnosticId)
+
+        public void NoCodeFix(string markupCode, string diagnosticId)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
             NoCodeFix(document, diagnosticId, markup.Locator);
         }
 
-        protected void NoCodeFixAtLine(string code, string diagnosticId, int line)
+        public void NoCodeFixAtLine(string code, string diagnosticId, int line)
         {
             var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, line);
             NoCodeFix(document, diagnosticId, locator);
         }
 
-        protected void NoCodeFixAtLine(string code, DiagnosticDescriptor descriptor, int line)
+        public void NoCodeFixAtLine(string code, DiagnosticDescriptor descriptor, int line)
         {
             var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, line);
             var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
             NoCodeFix(document, diagnostic, locator);
         }
-        protected void NoCodeFix(string markupCode, DiagnosticDescriptor descriptor)
+        public void NoCodeFix(string markupCode, DiagnosticDescriptor descriptor)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
@@ -48,47 +48,47 @@ namespace RoslynTestKit
             NoCodeFix(document, diagnostic, markup.Locator);
         }
 
-        protected void NoCodeFix(Document document, DiagnosticDescriptor descriptor, TextSpan span)
+        public void NoCodeFix(Document document, DiagnosticDescriptor descriptor, TextSpan span)
         {
             var locator = new TextSpanLocator(span);
             var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
             NoCodeFix(document, diagnostic, locator);
         }
 
-        protected void TestCodeFix(string markupCode, string expected, string diagnosticId, int codeFixIndex = 0)
+        public void TestCodeFix(string markupCode, string expected, string diagnosticId, int codeFixIndex = 0)
         {
             var codeActionSelector = new ByIndexCodeActionSelector(codeFixIndex);
             TestCodeFix(markupCode, expected, diagnosticId, codeActionSelector);
         }
 
-        protected void TestCodeFix(string markupCode, string expected, string diagnosticId, string title)
+        public void TestCodeFix(string markupCode, string expected, string diagnosticId, string title)
         {
             var codeActionSelector = new ByTitleCodeActionSelector(title);
             TestCodeFix(markupCode, expected, diagnosticId, codeActionSelector);
         }
 
-        protected void TestCodeFix(string markupCode, string expected, string diagnosticId, ICodeActionSelector actionSelector)
+        public void TestCodeFix(string markupCode, string expected, string diagnosticId, ICodeActionSelector actionSelector)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
             TestCodeFix(document, expected, diagnosticId, markup.Locator, actionSelector);
         }
 
-        protected void TestCodeFixAtLine(string code, string expected, string diagnosticId, int line, int codeFixIndex = 0)
+        public void TestCodeFixAtLine(string code, string expected, string diagnosticId, int line, int codeFixIndex = 0)
         {
             var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, line);
             TestCodeFix(document, expected, diagnosticId, locator, new ByIndexCodeActionSelector(codeFixIndex));
         }
 
-        protected void TestCodeFixAtLine(string code, string expected, DiagnosticDescriptor descriptor, int line, int codeFixIndex = 0)
+        public void TestCodeFixAtLine(string code, string expected, DiagnosticDescriptor descriptor, int line, int codeFixIndex = 0)
         {
             var document = CreateDocumentFromCode(code);
             var locator = LineLocator.FromCode(code, line);
             var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
             TestCodeFix(document, expected, diagnostic, locator, new ByIndexCodeActionSelector(codeFixIndex));
         }
-        protected void TestCodeFix(string markupCode, string expected, DiagnosticDescriptor descriptor, int codeFixIndex = 0)
+        public void TestCodeFix(string markupCode, string expected, DiagnosticDescriptor descriptor, int codeFixIndex = 0)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
@@ -96,7 +96,7 @@ namespace RoslynTestKit
             TestCodeFix(document, expected, diagnostic, markup.Locator, new ByIndexCodeActionSelector(codeFixIndex));
         }
 
-        protected void TestCodeFix(Document document, string expected, DiagnosticDescriptor descriptor, TextSpan span, int codeFixIndex = 0)
+        public void TestCodeFix(Document document, string expected, DiagnosticDescriptor descriptor, TextSpan span, int codeFixIndex = 0)
         {
             var locator = new TextSpanLocator(span);
             var diagnostic = FindOrCreateDiagnosticForDescriptor(document, descriptor, locator);
@@ -173,7 +173,7 @@ namespace RoslynTestKit
 
                 var compilation = document.Project.GetCompilationAsync().GetAwaiter().GetResult();
                 return compilation
-                    .WithAnalyzers(additionalAnalyzers.ToImmutableArray())
+                    .WithAnalyzers(additionalAnalyzers.ToImmutableArray(), new AnalyzerOptions(this.AdditionalFiles?.ToImmutableArray() ?? ImmutableArray<AdditionalText>.Empty))
                     .GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
                     .Where(x=>x.Location.SourceTree == documentTree);
             }
