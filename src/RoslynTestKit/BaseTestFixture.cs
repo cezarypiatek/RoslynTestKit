@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.VisualBasic;
+using AdditionalText = Microsoft.Dynamics.Nav.CodeAnalysis.AdditionalText;
+using CompilationOptions = Microsoft.Dynamics.Nav.CodeAnalysis.CompilationOptions;
+using Document = Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.Document;
+using LanguageNames = Microsoft.Dynamics.Nav.CodeAnalysis.LanguageNames;
 
 namespace RoslynTestKit
 {
@@ -40,10 +42,10 @@ namespace RoslynTestKit
 
             var project = new AdhocWorkspace()
                 .AddProject("TestProject", languageName)
-                .WithCompilationOptions(compilationOptions)
-                .AddMetadataReferences(frameworkReferences)
-                .AddMetadataReferences(extraReferences);
-           
+                .WithCompilationOptions(compilationOptions);
+            // .AddMetadataReferences(frameworkReferences)
+            // .AddMetadataReferences(extraReferences);
+
             Document mainDocument = null;
             foreach (var doc in docs.Select((e, i) => (e, i)))
             {
@@ -58,8 +60,9 @@ namespace RoslynTestKit
         private static CompilationOptions GetCompilationOptions(string languageName) =>
             languageName switch
             {
-                LanguageNames.CSharp => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
-                LanguageNames.VisualBasic => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                // LanguageNames.CSharp => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                // LanguageNames.VisualBasic => new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary),
+                LanguageNames.AL => new CompilationOptions(),
                 _ => throw new NotSupportedException($"Language {languageName} is not supported")
             };
 

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeRefactorings;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeRefactoring;
+using AdditionalText = Microsoft.Dynamics.Nav.CodeAnalysis.AdditionalText;
 
 namespace RoslynTestKit
 {
-    internal class ConfigurableCodeRefactoringTestFixture: CodeRefactoringTestFixture
+    internal class ConfigurableCodeRefactoringTestFixture : CodeRefactoringTestFixture
     {
         private readonly CodeRefactoringTestFixtureConfig _config;
         private CodeRefactoringProvider _provider;

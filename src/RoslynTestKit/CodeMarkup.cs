@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
 using RoslynTestKit.Utils;
 
 namespace RoslynTestKit

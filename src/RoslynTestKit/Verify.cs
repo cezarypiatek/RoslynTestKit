@@ -3,9 +3,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces;
 using RoslynTestKit.Utils;
 
 namespace RoslynTestKit

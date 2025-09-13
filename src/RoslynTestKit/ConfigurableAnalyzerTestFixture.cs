@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using AdditionalText = Microsoft.Dynamics.Nav.CodeAnalysis.AdditionalText;
 
 namespace RoslynTestKit
 {
-    internal class ConfigurableAnalyzerTestFixture: AnalyzerTestFixture
+    internal class ConfigurableAnalyzerTestFixture : AnalyzerTestFixture
     {
         private readonly DiagnosticAnalyzer _analyzer;
         private readonly AnalyzerTestFixtureConfig _config;

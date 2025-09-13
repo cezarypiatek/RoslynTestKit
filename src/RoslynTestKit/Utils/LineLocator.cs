@@ -1,5 +1,6 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces;
 
 namespace RoslynTestKit.Utils
 {
@@ -35,17 +36,17 @@ namespace RoslynTestKit.Utils
 
         public static LineLocator FromCode(string code, int lineNumber)
         {
-            var lineStart = NthIndexOf(code,'\n',  lineNumber-1);
+            var lineStart = NthIndexOf(code, '\n', lineNumber - 1);
             if (lineStart == -1)
             {
                 lineStart = 0;
             }
-            var lineEnd = NthIndexOf(code,'\n',  lineNumber);
+            var lineEnd = NthIndexOf(code, '\n', lineNumber);
             if (lineEnd == -1)
             {
                 lineEnd = code.Length;
             }
-            return new LineLocator(lineNumber, lineStart+1, lineEnd-1);
+            return new LineLocator(lineNumber, lineStart + 1, lineEnd - 1);
         }
 
         private static int NthIndexOf(string text, char value, int expectedOccurence)

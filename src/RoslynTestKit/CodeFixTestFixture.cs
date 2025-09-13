@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeFixes;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces;
 using RoslynTestKit.CodeActionLocators;
 using RoslynTestKit.Utils;
 
@@ -161,7 +162,7 @@ namespace RoslynTestKit
                     throw new InvalidOperationException($"Input document contains unexpected error: {diagnostic.GetMessage()}");
                 }
             }
-            
+
         }
 
         private IEnumerable<Diagnostic> GetAllReportedDiagnostics(Document document)
@@ -172,10 +173,16 @@ namespace RoslynTestKit
                 var documentTree = document.GetSyntaxTreeAsync().GetAwaiter().GetResult();
 
                 var compilation = document.Project.GetCompilationAsync().GetAwaiter().GetResult();
-                return compilation
-                    .WithAnalyzers(additionalAnalyzers.ToImmutableArray(), new AnalyzerOptions(this.AdditionalFiles?.ToImmutableArray() ?? ImmutableArray<AdditionalText>.Empty))
+                // return compilation
+                //     .WithAnalyzers(additionalAnalyzers.ToImmutableArray(), new AnalyzerOptions(this.AdditionalFiles?.ToImmutableArray() ?? ImmutableArray<AdditionalText>.Empty))
+                //     .GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
+                //     .Where(x => x.Location.SourceTree == documentTree);
+                CompilationWithAnalyzers compilationWithAnalyzers = new(compilation, [.. additionalAnalyzers],
+                    new AnalyzerOptions(AdditionalFiles?.ToImmutableArray() ?? ImmutableArray<AdditionalText>.Empty),
+                    CancellationToken.None);
+                return compilationWithAnalyzers
                     .GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
-                    .Where(x=>x.Location.SourceTree == documentTree);
+                    .Where(x => x.Location.SourceTree == documentTree);
             }
 
             return document.GetSemanticModelAsync().GetAwaiter().GetResult().GetDiagnostics();

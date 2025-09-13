@@ -2,16 +2,16 @@
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Completion;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.Completion;
 using RoslynTestKit.Utils;
 
 namespace RoslynTestKit
 {
     public abstract class CompletionProviderFixture : BaseTestFixture
     {
-        public void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger=null)
+        public void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger = null)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
@@ -19,7 +19,7 @@ namespace RoslynTestKit
             VerifyExpectations(document, markup.Locator, trigger, assertion);
         }
 
-        public void TestCompletion(string markupCode, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger=null)
+        public void TestCompletion(string markupCode, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger = null)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
@@ -58,7 +58,9 @@ namespace RoslynTestKit
             var selectedTrigger = trigger ?? CompletionTrigger.Default;
             var provider = CreateProvider();
             var span = locator.GetSpan();
-            var options = document.GetOptionsAsync(CancellationToken.None).GetAwaiter().GetResult();
+            // var options = document.GetOptionsAsync(CancellationToken.None).GetAwaiter().GetResult();
+            Workspace.TryGetWorkspace(document.GetTextAsync(CancellationToken.None).Result.Container, out var workspace);
+            var options = workspace.Options;
             var service = new TestCompletionService(document.Project.Solution.Workspace, LanguageName, provider);
             var result = service.GetCompletionsAsync(document, span.Start, selectedTrigger, ImmutableHashSet<string>.Empty, options, CancellationToken.None).GetAwaiter().GetResult();
             assertion(result?.Items ?? ImmutableArray<CompletionItem>.Empty);

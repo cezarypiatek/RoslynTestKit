@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
 
 namespace RoslynTestKit.CodeActionLocators
 {
-    public class ByTitleCodeActionSelector: ICodeActionSelector
+    public class ByTitleCodeActionSelector : ICodeActionSelector
     {
         private readonly string _title;
-       
+
         public ByTitleCodeActionSelector(string title)
         {
             _title = title;

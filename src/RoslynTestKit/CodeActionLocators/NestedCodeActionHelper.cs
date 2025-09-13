@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
-using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
 
 namespace RoslynTestKit.CodeActionLocators
 {
@@ -8,12 +8,12 @@ namespace RoslynTestKit.CodeActionLocators
     {
         public static ImmutableArray<CodeAction>? TryGetNestedAction(CodeAction group)
         {
-            if (group.GetType() is {Name: "CodeActionWithNestedActions"} groupType)
+            if (group.GetType() is { Name: "CodeActionWithNestedActions" } groupType)
             {
                 var nestedCodeActionObj = groupType.GetProperty("NestedCodeActions", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)?.GetValue(group);
                 if (nestedCodeActionObj != null)
                 {
-                    return  (ImmutableArray<CodeAction>)nestedCodeActionObj;
+                    return (ImmutableArray<CodeAction>)nestedCodeActionObj;
                 }
             }
 

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.Completion;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.Completion;
 using RoslynTestKit.CodeActionLocators;
 using RoslynTestKit.Utils;
 
@@ -29,7 +29,7 @@ namespace RoslynTestKit
 
         public static Exception UnexpectedErrorDiagnostic(IReadOnlyList<Diagnostic> errors)
         {
-            var messages = errors.MergeWithNewLines(x=>x.ToString());
+            var messages = errors.MergeWithNewLines(x => x.ToString());
             return new RoslynTestKitException($"Input document contains errors: \r\n {messages}");
         }
 
@@ -88,7 +88,7 @@ namespace RoslynTestKit
                     return nestedAction.Select(n => $"[{index}] = {x.Title} -> {n.Title}").ToArray();
                 }
 
-                return new[] {$"[{index}] = {x.Title}"};
+                return new[] { $"[{index}] = {x.Title}" };
             })) + Environment.NewLine;
         }
 

@@ -1,37 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <Authors>Dustin Campbell, Ivan Yochev, Cezary Piątek</Authors>
+    <Authors>Dustin Campbell, Ivan Yochev, Cezary Piątek, Christoph Stuber, Arthur van de Vondervoort</Authors>
     <Title>RoslynTestKit</Title>
-    <Description>A lightweight framework for creating unit tests for Roslyn diagnostic analyzers, code fixes and refactorings. This is a of fork Dustin Campbell's library RoslynNUnitLight - this version is a test framework independent.</Description>
-    <Copyright>Copyright 2015-2019 by Dustin Campbell, Ivan Yochev, Cezary Piątek</Copyright>
-    <PackageLicenseUrl>https://github.com/cezarypiatek/RoslynTestKit/blob/master/License.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/cezarypiatek/RoslynTestKit</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/cezarypiatek/RoslynTestKit</RepositoryUrl>
-    <PackageIconUrl>https://github.com/cezarypiatek/RoslynTestKit/raw/master/doc/logo.jpg</PackageIconUrl>
-    <PackageTags>Roslyn CodeAnalysis test testing tdd analyzer fixes refactor refactoring</PackageTags>
+    <Description>A lightweight framework for creating unit tests for Roslyn diagnostic analyzers, code fixes and refactorings.</Description>
+    <Copyright>Copyright 2015-2025 by Dustin Campbell, Ivan Yochev, Cezary Piątek, Christoph Stuber, Arthur van de Vondervoort</Copyright>
+    <PackageLicenseUrl>https://github.com/ALCops/RoslynTestKit/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ALCops/RoslynTestKit</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ALCops/RoslynTestKit</RepositoryUrl>
+    <PackageTags>Roslyn CodeAnalysis test testing tdd analyzer fixes refactor refactoring AL Business Central</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Language>en-US</Language>
     <PackageReleaseNotes></PackageReleaseNotes>
-    <PackageId>SmartAnalyzers.RoslynTestKit</PackageId>
+    <PackageId>ALCops.RoslynTestKit</PackageId>
     <Product>RoslynTestKit</Product>
-    <LangVersion>8.0</LangVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <DebugType>portable</DebugType>
     <Nullable>enable</Nullable>
+    <BCDevToolsVersion>16.0.21.53261-beta</BCDevToolsVersion>
+    <DotNetToolsPath>$(USERPROFILE)\.dotnet\tools</DotNetToolsPath>
+    <BCDevToolsPath>$(DotNetToolsPath)\.store\microsoft.dynamics.businesscentral.development.tools\$(BCDevToolsVersion)\microsoft.dynamics.businesscentral.development.tools\$(BCDevToolsVersion)\tools\net8.0\any</BCDevToolsPath>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ApprovalTests" Version="4.2.0" />
-    <PackageReference Include="DiffPlex" Version="1.5.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="4.0.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Workspaces" Version="4.0.1" />
-     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="ApprovalTests" Version="6.0.0" />
+    <PackageReference Include="DiffPlex" Version="1.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.14.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup>
+      <!-- https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry -->
+      <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>\\?\$(BCDevToolsPath)\Microsoft.Dynamics.Nav.CodeAnalysis.dll</HintPath>
+          <Private>False</Private>
+      </Reference>
+      <Reference Include="Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces">
+          <SpecificVersion>False</SpecificVersion>
+          <HintPath>\\?\$(BCDevToolsPath)\Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.dll</HintPath>
+          <Private>False</Private>
+    </Reference>
   </ItemGroup>
 </Project>

@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Completion;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces.Completion;
+using AdditionalText = Microsoft.Dynamics.Nav.CodeAnalysis.AdditionalText;
 
 namespace RoslynTestKit
 {
-    internal class ConfigurableCompletionProviderTestFixture: CompletionProviderFixture 
+    internal class ConfigurableCompletionProviderTestFixture : CompletionProviderFixture
     {
         private readonly CompletionProviderTestFixtureConfig _config;
         private CompletionProvider _provider;

@@ -18,18 +18,14 @@ jobs:
         PackageReleaseNotes: 'https://github.com/${{ github.repository }}/releases'
         ContinuousIntegrationBuild: true
     steps:
-    - uses: actions/checkout@v2   
-    - name: Setup .NET Core 5
-      uses: actions/setup-dotnet@v1
+    - uses: actions/checkout@v2
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: '5.0'   
-    - name: Calculate next version
-      uses: cezarypiatek/NextVersionGeneratorAction@0.4
-      with:
-        patch-pattern: '^Fix'
-        minor-pattern: '^(?!Fix)'
-        major-pattern: 'BREAKING CHANGES'
-        output-to-env-variable: 'VersionPrefix'    
+        dotnet-version: '8.0'   
+    - name: Install BCDevTools
+      run: |
+        dotnet tool install --global Microsoft.Dynamics.BusinessCentral.Development.Tools --version 16.0.21.53261-beta
     - name: Restore dependencies
       run: |
         dotnet nuget locals all --clear
@@ -40,4 +36,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: RoslynTestKit-Nugets
-        path: '**/SmartAnalyzers.RoslynTestKit*.nupkg'
+        path: '**/ALCops.RoslynTestKit*.nupkg'

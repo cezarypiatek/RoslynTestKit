@@ -23,8 +23,8 @@ jobs:
         ContinuousIntegrationBuild: true
     steps:
     - uses: actions/checkout@v2   
-    - name: Setup .NET Core 5
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '5.0'   
     - name: Calculate next version
@@ -33,7 +33,10 @@ jobs:
         patch-pattern: '^Fix'
         minor-pattern: '^(?!Fix)'
         major-pattern: 'BREAKING CHANGES'
-        output-to-env-variable: 'Version'    
+        output-to-env-variable: 'Version'
+    - name: Install BCDevTools
+      run: |
+        dotnet tool install --global Microsoft.Dynamics.BusinessCentral.Development.Tools --version 16.0.21.53261-beta
     - name: Restore dependencies
       run: |
         dotnet nuget locals all --clear
@@ -63,9 +66,9 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: src\RoslynTestKit\bin\Release\SmartAnalyzers.RoslynTestKit.${{ env.Version }}.nupkg
-        asset_name: SmartAnalyzers.RoslynTestKit.${{ env.Version }}.nupkg
+        asset_path: src\RoslynTestKit\bin\Release\ALCops.RoslynTestKit.${{ env.Version }}.nupkg
+        asset_name: ALCops.RoslynTestKit.${{ env.Version }}.nupkg
         asset_content_type: binary/octet-stream    
     - name: Publish extension to Nuget
       run: |
-        dotnet nuget push src\RoslynTestKit\bin\Release\SmartAnalyzers.RoslynTestKit.${{ env.Version }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        dotnet nuget push src\RoslynTestKit\bin\Release\ALCops.RoslynTestKit.${{ env.Version }}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json

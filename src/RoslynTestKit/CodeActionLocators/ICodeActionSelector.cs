@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.Dynamics.Nav.CodeAnalysis.CodeActions;
 
 namespace RoslynTestKit.CodeActionLocators
 {

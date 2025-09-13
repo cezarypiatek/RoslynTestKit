@@ -1,9 +1,9 @@
 ﻿using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
+using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Diagnostics;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Workspaces;
 using RoslynTestKit.Utils;
 
 namespace RoslynTestKit
@@ -28,7 +28,7 @@ namespace RoslynTestKit
             var document = CreateDocumentFromCode(code);
             NoDiagnostic(document, diagnosticId);
         }
-        
+
         public void NoDiagnostic(string code, string[] diagnosticIds)
         {
             var document = CreateDocumentFromCode(code);
@@ -41,7 +41,7 @@ namespace RoslynTestKit
             var locator = LineLocator.FromCode(code, lineNumber);
             NoDiagnostic(document, diagnosticId, locator);
         }
-        
+
         public void NoDiagnosticAtMarker(string markup, string diagnosticId)
         {
             var codeMarkup = new CodeMarkup(markup);
@@ -53,7 +53,7 @@ namespace RoslynTestKit
         {
             NoDiagnostic(document, new []{diagnosticId}, locator);
         }
-        
+
         public void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator locator = null)
         {
             var diagnostics = GetDiagnostics(document);
@@ -109,7 +109,8 @@ namespace RoslynTestKit
         {
             var analyzers = ImmutableArray.Create(CreateAnalyzer());
             var compilation = document.Project.GetCompilationAsync(CancellationToken.None).Result;
-            var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, options: AdditionalFiles != null? new AnalyzerOptions(AdditionalFiles.ToImmutableArray()) : null , cancellationToken: CancellationToken.None);
+            // var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, options: AdditionalFiles != null ? new AnalyzerOptions(AdditionalFiles.ToImmutableArray()) : null, cancellationToken: CancellationToken.None);
+            var compilationWithAnalyzers = new CompilationWithAnalyzers(compilation, analyzers, AdditionalFiles != null ? new AnalyzerOptions(AdditionalFiles.ToImmutableArray()) : null, cancellationToken: CancellationToken.None);
             var discarded = compilation.GetDiagnostics(CancellationToken.None);
             var errorsInDocument = discarded.Where(x => x.Severity == DiagnosticSeverity.Error).ToArray();
             if (errorsInDocument.Length > 0 && ThrowsWhenInputDocumentContainsError)

@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.Text;
+﻿using Microsoft.Dynamics.Nav.CodeAnalysis;
+using Microsoft.Dynamics.Nav.CodeAnalysis.Text;
 
 namespace RoslynTestKit.Utils
 {
@@ -14,7 +14,7 @@ namespace RoslynTestKit.Utils
 
         public bool Match(Location location)
         {
-            return location.IsInSource &&  _textSpan.IntersectsWith(location.SourceSpan);
+            return location.IsInSource && _textSpan.IntersectsWith(location.SourceSpan);
         }
 
         public TextSpan GetSpan()
