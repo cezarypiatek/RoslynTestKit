@@ -10,7 +10,7 @@
     <Title>RoslynTestKit</Title>
     <Description>A lightweight framework for creating unit tests for Roslyn diagnostic analyzers, code fixes and refactorings. This is a of fork Dustin Campbell's library RoslynNUnitLight - this version is a test framework independent.</Description>
     <Copyright>Copyright 2015-2019 by Dustin Campbell, Ivan Yochev, Cezary Piątek</Copyright>
-    <PackageLicenseUrl>https://github.com/cezarypiatek/RoslynTestKit/blob/master/License.txt</PackageLicenseUrl>
+    <PackageLicenseFile>License.txt</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/cezarypiatek/RoslynTestKit</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cezarypiatek/RoslynTestKit</RepositoryUrl>
     <PackageIcon>logo.jpg</PackageIcon>
@@ -26,6 +26,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="../../License.txt" Pack="true" PackagePath="\"/>
     <None Include="..\..\doc\logo.jpg" Pack="true" PackagePath="\"/>
     <PackageReference Include="ApprovalTests" Version="4.2.0" />
     <PackageReference Include="DiffPlex" Version="1.5.0" />
