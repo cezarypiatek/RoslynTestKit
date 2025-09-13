@@ -27,7 +27,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="../../License.txt" Pack="true" PackagePath="\"/>
-    <None Include="..\..\doc\logo.jpg" Pack="true" PackagePath="\"/>
+    <None Include="../../doc/logo.jpg" Pack="true" PackagePath="\"/>
     <PackageReference Include="ApprovalTests" Version="4.2.0" />
     <PackageReference Include="DiffPlex" Version="1.5.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
