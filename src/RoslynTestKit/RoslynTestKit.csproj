@@ -13,7 +13,7 @@
     <PackageLicenseUrl>https://github.com/cezarypiatek/RoslynTestKit/blob/master/License.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/cezarypiatek/RoslynTestKit</PackageProjectUrl>
     <RepositoryUrl>https://github.com/cezarypiatek/RoslynTestKit</RepositoryUrl>
-    <PackageIconUrl>https://github.com/cezarypiatek/RoslynTestKit/raw/master/doc/logo.jpg</PackageIconUrl>
+    <PackageIcon>logo.jpg</PackageIcon>
     <PackageTags>Roslyn CodeAnalysis test testing tdd analyzer fixes refactor refactoring</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
     <Language>en-US</Language>
@@ -26,6 +26,7 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="..\..\doc\logo.jpg" Pack="true" PackagePath="\"/>
     <PackageReference Include="ApprovalTests" Version="4.2.0" />
     <PackageReference Include="DiffPlex" Version="1.5.0" />
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.0.1" />
