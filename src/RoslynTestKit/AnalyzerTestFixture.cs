@@ -28,7 +28,7 @@ namespace RoslynTestKit
             var document = CreateDocumentFromCode(code);
             NoDiagnostic(document, diagnosticId);
         }
-        
+
         public void NoDiagnostic(string code, string[] diagnosticIds)
         {
             var document = CreateDocumentFromCode(code);
@@ -41,7 +41,7 @@ namespace RoslynTestKit
             var locator = LineLocator.FromCode(code, lineNumber);
             NoDiagnostic(document, diagnosticId, locator);
         }
-        
+
         public void NoDiagnosticAtMarker(string markup, string diagnosticId)
         {
             var codeMarkup = new CodeMarkup(markup);
@@ -49,12 +49,12 @@ namespace RoslynTestKit
             NoDiagnostic(document, diagnosticId, codeMarkup.Locator);
         }
 
-        public void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator = null)
+        public void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator? locator = null)
         {
-            NoDiagnostic(document, new []{diagnosticId}, locator);
+            NoDiagnostic(document, new[] { diagnosticId }, locator);
         }
-        
-        public void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator locator = null)
+
+        public void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator? locator = null)
         {
             var diagnostics = GetDiagnostics(document);
             if (locator != null)
@@ -109,7 +109,12 @@ namespace RoslynTestKit
         {
             var analyzers = ImmutableArray.Create(CreateAnalyzer());
             var compilation = document.Project.GetCompilationAsync(CancellationToken.None).Result;
-            var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, options: AdditionalFiles != null? new AnalyzerOptions(AdditionalFiles.ToImmutableArray()) : null , cancellationToken: CancellationToken.None);
+            if (compilation is null)
+            {
+                return ImmutableArray<Diagnostic>.Empty;
+            }
+
+            var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, options: AdditionalFiles != null ? new AnalyzerOptions(AdditionalFiles.ToImmutableArray()) : null, cancellationToken: CancellationToken.None);
             var discarded = compilation.GetDiagnostics(CancellationToken.None);
             var errorsInDocument = discarded.Where(x => x.Severity == DiagnosticSeverity.Error).ToArray();
             if (errorsInDocument.Length > 0 && ThrowsWhenInputDocumentContainsError)

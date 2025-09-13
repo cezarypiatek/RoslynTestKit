@@ -11,7 +11,7 @@ namespace RoslynTestKit
 {
     public abstract class CompletionProviderFixture : BaseTestFixture
     {
-        public void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger=null)
+        public void TestCompletion(string markupCode, string[] expectedCompletions, CompletionTrigger? trigger = null)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
@@ -19,7 +19,7 @@ namespace RoslynTestKit
             VerifyExpectations(document, markup.Locator, trigger, assertion);
         }
 
-        public void TestCompletion(string markupCode, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger=null)
+        public void TestCompletion(string markupCode, Action<ImmutableArray<CompletionItem>> assertion, CompletionTrigger? trigger = null)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);

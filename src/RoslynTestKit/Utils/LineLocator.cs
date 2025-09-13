@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 namespace RoslynTestKit.Utils
@@ -35,17 +36,17 @@ namespace RoslynTestKit.Utils
 
         public static LineLocator FromCode(string code, int lineNumber)
         {
-            var lineStart = NthIndexOf(code,'\n',  lineNumber-1);
+            var lineStart = NthIndexOf(code, '\n', lineNumber - 1);
             if (lineStart == -1)
             {
                 lineStart = 0;
             }
-            var lineEnd = NthIndexOf(code,'\n',  lineNumber);
+            var lineEnd = NthIndexOf(code, '\n', lineNumber);
             if (lineEnd == -1)
             {
                 lineEnd = code.Length;
             }
-            return new LineLocator(lineNumber, lineStart+1, lineEnd-1);
+            return new LineLocator(lineNumber, lineStart + 1, lineEnd - 1);
         }
 
         private static int NthIndexOf(string text, char value, int expectedOccurence)
@@ -66,7 +67,13 @@ namespace RoslynTestKit.Utils
         }
         public static LineLocator FromDocument(Document document, int lineNumber)
         {
-            var sourceCode = document.GetSyntaxRootAsync().GetAwaiter().GetResult().ToFullString();
+            var syntaxRoot = document.GetSyntaxRootAsync().GetAwaiter().GetResult();
+            if (syntaxRoot == null)
+            {
+                throw new InvalidOperationException("Could not retrieve syntax root from document");
+            }
+
+            var sourceCode = syntaxRoot.ToFullString();
             return FromCode(sourceCode, lineNumber);
         }
     }

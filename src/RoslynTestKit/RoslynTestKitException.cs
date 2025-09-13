@@ -29,7 +29,7 @@ namespace RoslynTestKit
 
         public static Exception UnexpectedErrorDiagnostic(IReadOnlyList<Diagnostic> errors)
         {
-            var messages = errors.MergeWithNewLines(x=>x.ToString());
+            var messages = errors.MergeWithNewLines(x => x.ToString());
             return new RoslynTestKitException($"Input document contains errors: \r\n {messages}");
         }
 
@@ -74,7 +74,7 @@ namespace RoslynTestKit
             return new RoslynTestKitException($"Found reported CodeRefactorings '{refactoringDescriptions}' in spite of the expectations ");
         }
 
-        private static string GetActionsDescription(ImmutableArray<CodeAction> codeFixes, string title = null)
+        private static string GetActionsDescription(ImmutableArray<CodeAction> codeFixes, string? title = null)
         {
             if (codeFixes.Length == 0)
             {
@@ -88,7 +88,7 @@ namespace RoslynTestKit
                     return nestedAction.Select(n => $"[{index}] = {x.Title} -> {n.Title}").ToArray();
                 }
 
-                return new[] {$"[{index}] = {x.Title}"};
+                return new[] { $"[{index}] = {x.Title}" };
             })) + Environment.NewLine;
         }
 
@@ -99,7 +99,7 @@ namespace RoslynTestKit
 
         public static RoslynTestKitException MoreThanOneOperationForCodeAction(CodeAction codeAction, List<CodeActionOperation> operations)
         {
-            var foundOperationDescriptions = operations.MergeWithComma(x => x.Title, title: " Found operations: ");
+            var foundOperationDescriptions = operations.MergeWithComma(x => x.Title ?? "<unnamed>", title: " Found operations: ");
             return new RoslynTestKitException($"There is more than one operation associated with '{codeAction.Title}'.{foundOperationDescriptions}");
         }
 

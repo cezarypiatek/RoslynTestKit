@@ -17,7 +17,7 @@ namespace RoslynTestKit
     {
         protected abstract CodeFixProvider CreateProvider();
 
-        protected virtual IReadOnlyCollection<DiagnosticAnalyzer> CreateAdditionalAnalyzers() => null;
+        protected virtual IReadOnlyCollection<DiagnosticAnalyzer>? CreateAdditionalAnalyzers() => null;
 
         public void NoCodeFix(string markupCode, string diagnosticId)
         {
@@ -161,7 +161,7 @@ namespace RoslynTestKit
                     throw new InvalidOperationException($"Input document contains unexpected error: {diagnostic.GetMessage()}");
                 }
             }
-            
+
         }
 
         private IEnumerable<Diagnostic> GetAllReportedDiagnostics(Document document)
@@ -172,13 +172,23 @@ namespace RoslynTestKit
                 var documentTree = document.GetSyntaxTreeAsync().GetAwaiter().GetResult();
 
                 var compilation = document.Project.GetCompilationAsync().GetAwaiter().GetResult();
+                if (compilation is null)
+                {
+                    throw new InvalidOperationException("Unable to get compilation from document project.");
+                }
+
                 return compilation
                     .WithAnalyzers(additionalAnalyzers.ToImmutableArray(), new AnalyzerOptions(this.AdditionalFiles?.ToImmutableArray() ?? ImmutableArray<AdditionalText>.Empty))
                     .GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
-                    .Where(x=>x.Location.SourceTree == documentTree);
+                    .Where(x => x.Location.SourceTree == documentTree);
             }
 
-            return document.GetSemanticModelAsync().GetAwaiter().GetResult().GetDiagnostics();
+            var semanticModel = document.GetSemanticModelAsync().GetAwaiter().GetResult();
+            if (semanticModel == null)
+            {
+                throw new InvalidOperationException("Unable to get semantic model from document.");
+            }
+            return semanticModel.GetDiagnostics();
         }
 
         private ImmutableArray<CodeAction> GetCodeFixes(Document document, Diagnostic diagnostic)
@@ -200,6 +210,10 @@ namespace RoslynTestKit
             }
 
             var tree = document.GetSyntaxTreeAsync(CancellationToken.None).Result;
+            if (tree == null)
+            {
+                throw new InvalidOperationException("Unable to get syntax tree from document.");
+            }
             return Diagnostic.Create(descriptor, Location.Create(tree, locator.GetSpan()));
         }
     }

@@ -14,9 +14,9 @@ namespace RoslynTestKit
 
         protected virtual bool ThrowsWhenInputDocumentContainsError { get; } = false;
 
-        protected virtual IReadOnlyCollection<MetadataReference> References => null;
+        protected virtual IReadOnlyCollection<MetadataReference>? References => null;
 
-        protected virtual IReadOnlyCollection<AdditionalText> AdditionalFiles => null;
+        protected virtual IReadOnlyCollection<AdditionalText>? AdditionalFiles => null;
 
         protected Document CreateDocumentFromCode(string code)
         {
@@ -26,9 +26,8 @@ namespace RoslynTestKit
         internal const string FileSeparator = "/*EOD*/";
         private readonly static Regex FileSeparatorPattern = new Regex(Regex.Escape(FileSeparator));
 
-
         /// <summary>
-        ///     Should create the compilation and return a document that represents the provided code
+        /// Should create the compilation and return a document that represents the provided code
         /// </summary>
         protected virtual Document CreateDocumentFromCode(string code, string languageName, IReadOnlyCollection<MetadataReference> extraReferences)
         {
@@ -37,14 +36,18 @@ namespace RoslynTestKit
             var compilationOptions = GetCompilationOptions(languageName);
 
             var docs = FileSeparatorPattern.Split(code).Reverse().ToList();
+            if (docs.Count == 0)
+            {
+                throw new ArgumentException("Code cannot be empty after splitting", nameof(code));
+            }
 
             var project = new AdhocWorkspace()
                 .AddProject("TestProject", languageName)
                 .WithCompilationOptions(compilationOptions)
                 .AddMetadataReferences(frameworkReferences)
                 .AddMetadataReferences(extraReferences);
-           
-            Document mainDocument = null;
+
+            Document? mainDocument = null;
             foreach (var doc in docs.Select((e, i) => (e, i)))
             {
                 var docContent = docs.Count > 1 ? doc.e.Trim() : doc.e;
@@ -52,7 +55,7 @@ namespace RoslynTestKit
                 project = mainDocument.Project;
             }
 
-            return mainDocument;
+            return mainDocument!; // Non-null assertion since we checked docs.Count > 0
         }
 
         private static CompilationOptions GetCompilationOptions(string languageName) =>
@@ -69,7 +72,7 @@ namespace RoslynTestKit
             yield return ReferenceSource.Linq;
             yield return ReferenceSource.LinqExpression;
 
-            if (ReferenceSource.Core.Display.EndsWith("mscorlib.dll") == false)
+            if (ReferenceSource.Core?.Display?.EndsWith("mscorlib.dll") == false)
             {
                 foreach (var netStandardCoreLib in ReferenceSource.NetStandardBasicLibs.Value)
                 {

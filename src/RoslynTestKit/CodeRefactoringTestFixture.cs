@@ -15,7 +15,7 @@ namespace RoslynTestKit
 
         protected virtual bool FailWhenInputContainsErrors => true;
 
-        public void TestCodeRefactoring(string markupCode, string expected,  ICodeActionSelector actionSelector)
+        public void TestCodeRefactoring(string markupCode, string expected, ICodeActionSelector actionSelector)
         {
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
@@ -28,7 +28,7 @@ namespace RoslynTestKit
             var document = CreateDocumentFromCode(markup.Code);
             TestCodeRefactoring(document, expected, markup.Locator, new ByIndexCodeActionSelector(refactoringIndex));
         }
-        
+
         public void TestCodeRefactoring(string markupCode, string expected, string title)
         {
             var markup = new CodeMarkup(markupCode);
@@ -67,7 +67,7 @@ namespace RoslynTestKit
 
             var codeRefactorings = GetCodeRefactorings(document, locator);
             var selectedRefactoring = codeActionSelector.Find(codeRefactorings);
-            
+
             if (selectedRefactoring is null)
             {
                 throw RoslynTestKitException.CodeRefactoringNotFound(codeActionSelector, codeRefactorings, locator);

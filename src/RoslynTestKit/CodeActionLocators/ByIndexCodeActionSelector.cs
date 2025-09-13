@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 
 namespace RoslynTestKit.CodeActionLocators
 {
-    public class ByIndexCodeActionSelector: ICodeActionSelector
+    public class ByIndexCodeActionSelector : ICodeActionSelector
     {
 
         private readonly int _index;
@@ -15,7 +15,7 @@ namespace RoslynTestKit.CodeActionLocators
             _index = index;
         }
 
-        public CodeAction Find(IReadOnlyList<CodeAction> actions)
+        public CodeAction? Find(IReadOnlyList<CodeAction> actions)
         {
 
             if (_index > actions.Count - 1)

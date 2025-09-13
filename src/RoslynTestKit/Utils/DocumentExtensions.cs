@@ -9,7 +9,13 @@ namespace RoslynTestKit.Utils
     {
         public static IReadOnlyList<Diagnostic> GetErrors(this Document document)
         {
-            var diagnostics = document.GetSemanticModelAsync().GetAwaiter().GetResult().GetDiagnostics();
+            var semanticModel = document.GetSemanticModelAsync().GetAwaiter().GetResult();
+            if (semanticModel == null)
+            {
+                return new List<Diagnostic>();
+            }
+
+            var diagnostics = semanticModel.GetDiagnostics();
             return diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
         }
     }

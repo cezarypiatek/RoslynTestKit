@@ -5,6 +5,6 @@ namespace RoslynTestKit.CodeActionLocators
 {
     public interface ICodeActionSelector
     {
-        public CodeAction Find(IReadOnlyList<CodeAction> actions);
+        public CodeAction? Find(IReadOnlyList<CodeAction> actions);
     }
 }

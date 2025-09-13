@@ -6,7 +6,7 @@ namespace RoslynTestKit.CodeActionLocators
     /// <summary>
     ///     This selector is intended to search for a nested code actions
     /// </summary>
-    public class ByTitleForNestedActionSelector: ICodeActionSelector
+    public class ByTitleForNestedActionSelector : ICodeActionSelector
     {
         private readonly ByTitleCodeActionSelector groupSelector;
         private readonly ByTitleCodeActionSelector nestedActionSelector;
@@ -17,9 +17,9 @@ namespace RoslynTestKit.CodeActionLocators
             this.nestedActionSelector = new ByTitleCodeActionSelector(actionTitle);
         }
 
-        public CodeAction Find(IReadOnlyList<CodeAction> actions)
+        public CodeAction? Find(IReadOnlyList<CodeAction> actions)
         {
-            if (groupSelector.Find(actions) is { } group && NestedCodeActionHelper.TryGetNestedAction(group) is {} nestedActions)
+            if (groupSelector.Find(actions) is { } group && NestedCodeActionHelper.TryGetNestedAction(group) is { } nestedActions)
             {
                 return nestedActionSelector.Find(nestedActions);
             }
