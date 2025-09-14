@@ -29,7 +29,7 @@ namespace RoslynTestKit
             var document = CreateDocumentFromCode(code);
             NoDiagnostic(document, diagnosticId);
         }
-
+        
         public void NoDiagnostic(string code, string[] diagnosticIds)
         {
             var document = CreateDocumentFromCode(code);
@@ -42,7 +42,7 @@ namespace RoslynTestKit
             var locator = LineLocator.FromCode(code, lineNumber);
             NoDiagnostic(document, diagnosticId, locator);
         }
-
+        
         public void NoDiagnosticAtMarker(string markup, string diagnosticId)
         {
             var codeMarkup = new CodeMarkup(markup);
@@ -61,7 +61,7 @@ namespace RoslynTestKit
         {
             NoDiagnostic(document, new[] { diagnosticId }, locator);
         }
-
+        
         public void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator locator = null)
         {
             NoDiagnostic(document, diagnosticIds, new List<IDiagnosticLocator> { locator });
