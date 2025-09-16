@@ -37,7 +37,7 @@ jobs:
     - name: Build extension
       run: dotnet build $env:SolutionPath 
     - name: Collect artifacts - nugets
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: RoslynTestKit-Nugets
         path: '**/SmartAnalyzers.RoslynTestKit*.nupkg'
