@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -49,6 +50,13 @@ namespace RoslynTestKit
             NoDiagnostic(document, diagnosticId, codeMarkup.Locator);
         }
 
+        public void NoDiagnosticAtAllMarkers(string markup, string diagnosticId)
+        {
+            var codeMarkup = new CodeMarkup(markup);
+            var document = CreateDocumentFromCode(codeMarkup.Code);
+            NoDiagnostic(document, new[] { diagnosticId }, codeMarkup.AllLocators);
+        }
+
         public void NoDiagnostic(Document document, string diagnosticId, IDiagnosticLocator? locator = null)
         {
             NoDiagnostic(document, new[] { diagnosticId }, locator);
@@ -56,10 +64,15 @@ namespace RoslynTestKit
 
         public void NoDiagnostic(Document document, string[] diagnosticIds, IDiagnosticLocator? locator = null)
         {
+            NoDiagnostic(document, diagnosticIds, locator != null ? new List<IDiagnosticLocator> { locator } : null);
+        }
+
+        public void NoDiagnostic(Document document, string[] diagnosticIds, List<IDiagnosticLocator>? locators)
+        {
             var diagnostics = GetDiagnostics(document);
-            if (locator != null)
+            if (locators != null)
             {
-                diagnostics = diagnostics.Where(x => locator.Match(x.Location)).ToImmutableArray();
+                diagnostics = diagnostics.Where(x => locators.Any(locator => locator.Match(x.Location))).ToImmutableArray();
             }
             var unexpectedDiagnostics = diagnostics.Where(d => diagnosticIds.Contains(d.Id)).ToList();
             if (unexpectedDiagnostics.Count > 0)
@@ -73,6 +86,13 @@ namespace RoslynTestKit
             var markup = new CodeMarkup(markupCode);
             var document = CreateDocumentFromCode(markup.Code);
             HasDiagnostic(document, diagnosticId, markup.Locator);
+        }
+
+        public void HasDiagnosticAtAllMarkers(string markupCode, string diagnosticId)
+        {
+            var markup = new CodeMarkup(markupCode);
+            var document = CreateDocumentFromCode(markup.Code);
+            HasDiagnostic(document, diagnosticId, markup.AllLocators);
         }
 
         public void HasDiagnosticAtLine(string code, string diagnosticId, int lineNumber)
@@ -96,12 +116,19 @@ namespace RoslynTestKit
 
         private void HasDiagnostic(Document document, string diagnosticId, IDiagnosticLocator locator)
         {
-            var reporteddiagnostics = GetDiagnostics(document).Where(d => locator.Match(d.Location)).ToArray();
-            var matchedDiagnostics = reporteddiagnostics.Count(d => d.Id == diagnosticId);
+            HasDiagnostic(document, diagnosticId, new List<IDiagnosticLocator> { locator });
+        }
 
-            if (matchedDiagnostics == 0)
+        private void HasDiagnostic(Document document, string diagnosticId, List<IDiagnosticLocator> locators)
+        {
+            var allDiagnostics = GetDiagnostics(document);
+            foreach (var locator in locators)
             {
-                throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reporteddiagnostics);
+                var reportedDiagnostics = allDiagnostics.Where(d => locator.Match(d.Location)).ToArray();
+                if (!reportedDiagnostics.Any(d => d.Id == diagnosticId))
+                {
+                    throw RoslynTestKitException.DiagnosticNotFound(diagnosticId, locator, reportedDiagnostics);
+                }
             }
         }
 
