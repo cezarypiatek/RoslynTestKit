@@ -14,7 +14,7 @@ namespace RoslynTestKit.Utils
 
         public bool Match(Location location)
         {
-            return location.IsInSource &&  _textSpan.IntersectsWith(location.SourceSpan);
+            return location.IsInSource && _textSpan.Start == location.SourceSpan.Start && _textSpan.End == location.SourceSpan.End;
         }
 
         public TextSpan GetSpan()
