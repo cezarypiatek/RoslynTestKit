@@ -177,6 +177,8 @@ namespace RoslynTestKit
                     throw new InvalidOperationException("Unable to get compilation from document project.");
                 }
 
+                compilation = compilation.WithOptions(compilation.Options.WithSpecificDiagnosticOptions(
+                    additionalAnalyzers.SelectMany(a => a.SupportedDiagnostics.Where(d => !d.IsEnabledByDefault).ToImmutableDictionary(d => d.Id, d => d.MapSeverityToReport()))));
                 return compilation
                     .WithAnalyzers(additionalAnalyzers.ToImmutableArray(), new AnalyzerOptions(this.AdditionalFiles?.ToImmutableArray() ?? ImmutableArray<AdditionalText>.Empty))
                     .GetAnalyzerDiagnosticsAsync().GetAwaiter().GetResult()
